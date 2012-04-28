@@ -5,15 +5,31 @@ var PARSE_REST_API_KEY = 'KaDTOFik6e2Zk94wVKkyNxahWCHdL9muzOFLoqr7';
 var should = require('should');
 var async = require('async');
 var Kaiseki = require('../lib/kaiseki');
+var _ = require('underscore');
 
-describe('Objects', function() {
+var className = 'Dogs';
+var parse = new Kaiseki(PARSE_APP_ID, PARSE_REST_API_KEY);
 
-  var parse = new Kaiseki(PARSE_APP_ID, PARSE_REST_API_KEY);
+describe('Utils', function() {
+  it('can stringify param values', function() {
+    var params = {
+      where: { score: {"$exists": false}},
+      order: 'name'
+    };
+    var stringified = parse.stringifyParamValues(params);
+    var expected = {
+      where: '{"score":{"$exists":false}}',
+      order: 'name'
+    };
+    stringified.should.eql(expected);
+  });
+});
+
+describe('Object', function() {
   var dog = {
     name: 'Prince',
     breed: 'Pomeranian'
   };
-  var className = 'Dogs';
   var object = null; // the Parse object we'll be passing along
 
   it('can create', function(done) {
@@ -93,5 +109,115 @@ describe('Objects', function() {
       done();
     });
   });
-
 });
+
+describe('Objects', function() {
+  var parse = new Kaiseki(PARSE_APP_ID, PARSE_REST_API_KEY);
+  var dogs = [
+    {name: 'Prince', breed: 'Pomeranian'},
+    {name: 'Princess', breed: 'Maltese'},
+    {name: 'Keiko', breed: 'Chow Chow'},
+    {name: 'Buddy', breed: 'Maltese'}
+  ];
+  var objects = []; // objects for queries
+  var objectIds = null;
+
+  // create objects for testing
+  before(function(done) {
+    async.forEach(dogs, 
+      function(item, callback) {
+        parse.createObject(className, item, function(err, res, body) {
+          objects.push(body);
+          callback(err);
+        });
+      }, 
+      function(err) {
+        objects = _(objects).sortBy('objectId');
+        done(err);
+      }
+    );
+  });
+
+  // delete objects after testing
+  after(function(done) {
+    async.forEach(objects, 
+      function(item, callback) {
+        parse.deleteObject(className, item.objectId, function(err, res, body) {
+          callback(err);
+        });
+      },
+      function(err) {
+        done();
+      }
+    );
+  });
+
+  it('supports basic queries', function(done) {
+    // check data first
+    objects.should.have.length(dogs.length);
+    objectIds = _(objects).pluck('objectId').sort();
+
+    // query all
+    parse.getObjects(className, function(err, res, body) {
+      objects.should.have.length(dogs.length);
+
+      var fetchedIds = _(body).pluck('objectId').sort();
+      objectIds.should.eql(fetchedIds);
+
+      body = _(body).sortBy('objectId');
+      // copy updatedAt for easy comparision later
+      _(objects).each(function(item, index) { item.updatedAt = body[index].updatedAt; });
+      objects.should.eql(body);
+
+      //console.log(fetchedIds, objectIds);
+      done();
+    });
+  });
+
+  it('supports query constraints', function(done) {
+    var params = { where: {breed: "Maltese"} };
+    parse.getObjects(className, params, function(err, res, body) {
+      body.length.should.eql(2);
+      var names = _(body).pluck('name').sort();
+      names.should.eql(['Buddy', 'Princess']);
+
+      done(err);
+    });
+  });
+
+  it('supports multiple query constraints', function(done) {
+    async.series([
+      // order
+      function(callback) {
+        var expected = _(objects).pluck('name').sort();
+        var params = { order: 'name' };
+        parse.getObjects(className, params, function(err, res, body) {
+          body.length.should.eql(expected.length);
+          var names = _(body).pluck('name');
+          names.should.eql(expected);
+          
+          callback();
+        });
+      },
+
+      // where and order
+      function(callback) {
+        var expected = ['Princess', 'Buddy'];
+        var params = { where: {breed: "Maltese"}, order: '-name' };
+        parse.getObjects(className, params, function(err, res, body) {
+          body.length.should.eql(expected.length);
+          var names = _(body).pluck('name');
+          names.should.eql(expected);
+
+          callback();
+        });
+      }
+
+    ], function(err, results) {
+      done(err);
+    });
+  });
+  
+});
+
+
