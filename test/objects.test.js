@@ -163,7 +163,7 @@ describe('objects', function() {
 
     // query all
     parse.getObjects(className, function(err, res, body) {
-      objects.should.have.length(dogs.length);
+      body.should.have.length(dogs.length);
 
       var fetchedIds = _(body).pluck('objectId').sort();
       objectIds.should.eql(fetchedIds);

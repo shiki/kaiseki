@@ -14,13 +14,30 @@ var users = {
     nickname: 'Zen',
     username: 'zennia',
     password: 'password'
+  },
+  'Maricris': {
+    name: 'Maricris',
+    gender: 'female',
+    nickname: 'Kit',
+    username: 'maricris',
+    password: 'whew'
+  },
+  'Joel': {
+    name: 'Joel',
+    gender: 'male',
+    nickname: 'JB1',
+    username: 'joel',
+    password: 'monkayo'
   }
 };
+// users as an array
+var userValues = _(users).values(); 
 
 // for "before" hook
 var deleteUsers = function(callback) {
   // query all
   parse.getUsers(function(err, res, body) {
+
     // delete all
     async.forEach(body, function(item, callback) {
       async.waterfall([
@@ -32,8 +49,7 @@ var deleteUsers = function(callback) {
         },
         // delete
         function(object, callback) {
-          parse.deleteUser(item, object.sessionToken, function(err, res, body) {
-            console.log(body);
+          parse.deleteUser(object.objectId, object.sessionToken, function(err, res, body) {
             callback(err);
           });
         }
@@ -45,6 +61,7 @@ var deleteUsers = function(callback) {
     });
   });
 };
+
 
 describe('user', function() {
   var object = null; // the Parse user object
@@ -113,4 +130,107 @@ describe('user', function() {
       done();
     });
   });
+});
+
+
+describe('users', function() {
+  var objects = []; // objects for queries
+  var objectIds = null;
+
+  // create objects for testing
+  before(function(done) {
+    async.series([
+      deleteUsers, // just to be sure
+
+      function(callback) {
+        async.forEach(userValues, 
+          function(item, callback) {
+            parse.createUser(item, function(err, res, body) {
+              objects.push(body);
+              callback(err);
+            });
+          }, 
+          function(err) {
+            objects = _(objects).sortBy('objectId');
+            callback(err);
+          }
+        );
+      }
+    ], function(err, results) {
+      done(err);
+    });
+  });
+
+  // delete users after testing
+  after(deleteUsers);
+
+  it('supports basic queries', function(done) {
+    // check data first
+    objects.should.have.length(userValues.length);
+    objectIds = _(objects).pluck('objectId').sort();
+
+    var objectsToCompare = _(objects).map(function(item) {
+      return _.pick(item, 'name', 'gender', 'username', 'nickname', 'createdAt', 'updatedAt', 'objectId');
+    });
+
+    // query all
+    parse.getUsers(function(err, res, body) {
+      body.should.have.length(userValues.length);
+
+      var fetchedIds = _(body).pluck('objectId').sort();
+      objectIds.should.eql(fetchedIds);
+
+      body = _(body).sortBy('objectId');
+      // copy updatedAt for easy comparision 
+      _(objectsToCompare).each(function(item, index) { item.updatedAt = body[index].updatedAt; });
+      objectsToCompare.should.eql(body);
+
+      done();
+    });
+  });
+
+  it('supports query constraints', function(done) {
+    var params = { where: {gender: "female"} };
+    parse.getUsers(params, function(err, res, body) {
+      body.length.should.eql(2);
+      var names = _(body).pluck('name').sort();
+      names.should.eql(['Maricris', 'Zennia']);
+
+      done(err);
+    });
+  });
+
+  it('supports multiple query constraints', function(done) {
+    async.series([
+      // order
+      function(callback) {
+        var expected = _(objects).pluck('name').sort();
+        var params = { order: 'name' };
+        parse.getUsers(params, function(err, res, body) {
+          body.length.should.eql(expected.length);
+          var names = _(body).pluck('name');
+          names.should.eql(expected);
+          
+          callback();
+        });
+      },
+
+      // where and order
+      function(callback) {
+        var expected = ['Zennia', 'Maricris'];
+        var params = { where: {gender: "female"}, order: '-name' };
+        parse.getUsers(params, function(err, res, body) {
+          body.length.should.eql(expected.length);
+          var names = _(body).pluck('name');
+          names.should.eql(expected);
+
+          callback();
+        });
+      }
+
+    ], function(err, results) {
+      done(err);
+    });
+  });
+  
 });
