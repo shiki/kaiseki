@@ -1,31 +1,14 @@
 
-var PARSE_APP_ID = 'uoVDvekxzKVrPay12PR9rFhMk18xSiXjUFJRQ893';
-var PARSE_REST_API_KEY = 'KaDTOFik6e2Zk94wVKkyNxahWCHdL9muzOFLoqr7';
-
+var config = require('./config');
 var should = require('should');
 var async = require('async');
 var Kaiseki = require('../lib/kaiseki');
 var _ = require('underscore');
 
 var className = 'Dogs';
-var parse = new Kaiseki(PARSE_APP_ID, PARSE_REST_API_KEY);
+var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY);
 
-describe('Utils', function() {
-  it('can stringify param values', function() {
-    var params = {
-      where: { score: {"$exists": false}},
-      order: 'name'
-    };
-    var stringified = parse.stringifyParamValues(params);
-    var expected = {
-      where: '{"score":{"$exists":false}}',
-      order: 'name'
-    };
-    stringified.should.eql(expected);
-  });
-});
-
-describe('Object', function() {
+describe('object', function() {
   var dog = {
     name: 'Prince',
     breed: 'Pomeranian'
@@ -111,8 +94,7 @@ describe('Object', function() {
   });
 });
 
-describe('Objects', function() {
-  var parse = new Kaiseki(PARSE_APP_ID, PARSE_REST_API_KEY);
+describe('objects', function() {
   var dogs = [
     {name: 'Prince', breed: 'Pomeranian'},
     {name: 'Princess', breed: 'Maltese'},
@@ -124,18 +106,40 @@ describe('Objects', function() {
 
   // create objects for testing
   before(function(done) {
-    async.forEach(dogs, 
-      function(item, callback) {
-        parse.createObject(className, item, function(err, res, body) {
-          objects.push(body);
-          callback(err);
+    async.series([
+      // just to be sure, delete all data in the table
+      function(callback) {
+        // query all
+        parse.getObjects(className, function(err, res, body) {
+          var fetchedIds = _(body).pluck('objectId').sort();
+          // delete all
+          async.forEach(fetchedIds, function(item, callback) {
+            parse.deleteObject(className, item, function(err, res, body) {
+              callback(err);
+            });
+          }, function(err, results) {
+            callback(err);
+          });
         });
-      }, 
-      function(err) {
-        objects = _(objects).sortBy('objectId');
-        done(err);
+      },
+
+      function(callback) {
+        async.forEach(dogs, 
+          function(item, callback) {
+            parse.createObject(className, item, function(err, res, body) {
+              objects.push(body);
+              callback(err);
+            });
+          }, 
+          function(err) {
+            objects = _(objects).sortBy('objectId');
+            callback(err);
+          }
+        );
       }
-    );
+    ], function(err, results) {
+      done(err);
+    });
   });
 
   // delete objects after testing
