@@ -49,7 +49,8 @@ var deleteUsers = function(callback) {
         },
         // delete
         function(object, callback) {
-          parse.deleteUser(object.objectId, object.sessionToken, function(err, res, body) {
+          parse.sessionToken = object.sessionToken;
+          parse.deleteUser(object.objectId, function(err, res, body) {
             callback(err);
           });
         }
@@ -104,7 +105,8 @@ describe('user', function() {
     async.series([
       // update
       function(callback) {
-        parse.updateUser(object.objectId, object.sessionToken, {nickname: newNick}, function(err, res, body) {
+        var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, object.sessionToken);
+        parse.updateUser(object.objectId, {nickname: newNick}, function(err, res, body) {
           should.exist(body.updatedAt);
           callback(err);
         });
@@ -124,7 +126,8 @@ describe('user', function() {
   });
 
   it('can delete', function(done) {
-    parse.deleteUser(object.objectId, object.sessionToken, function(err, res, body) {
+    var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, object.sessionToken);
+    parse.deleteUser(object.objectId, function(err, res, body) {
       should.not.exist(err);
       res.statusCode.should.eql(200);
       done();
