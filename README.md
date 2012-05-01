@@ -22,7 +22,7 @@ Installing
 
         npm install
 
-Or you can just download the files and put it in your project.
+ * Or you can just download the files and put it in your project.
 
 
 
