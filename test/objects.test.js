@@ -16,7 +16,8 @@ describe('object', function() {
   var object = null; // the Parse object we'll be passing along
 
   it('can create', function(done) {
-    parse.createObject(className, dog, function(err, res, body) {
+    parse.createObject(className, dog, function(err, res, body, success) {
+      success.should.be.true;
       should.not.exist(err);
       object = body;
 
@@ -30,7 +31,8 @@ describe('object', function() {
   });
 
   it('can get', function(done) {
-    parse.getObject(className, object.objectId, function(err, res, body) {
+    parse.getObject(className, object.objectId, function(err, res, body, success) {
+      success.should.be.true;
       should.not.exist(err);
       // object from .createObject does not have updatedAt
       object.updatedAt = body.updatedAt;
@@ -46,7 +48,8 @@ describe('object', function() {
     async.series([
       // update the object
       function(callback) {
-        parse.updateObject(className, object.objectId, { name: newName }, function(err, res, body) {
+        parse.updateObject(className, object.objectId, { name: newName }, function(err, res, body, success) {
+          success.should.be.true;
           should.not.exist(err);
           should.exist(body.updatedAt);
           callback(null, body);
@@ -54,7 +57,8 @@ describe('object', function() {
       },
       // get the object and test that it has really changed
       function(callback) {
-        parse.getObject(className, object.objectId, function(err, res, body) {
+        parse.getObject(className, object.objectId, function(err, res, body, success) {
+          success.should.be.true;
           should.not.exist(err);
           body.objectId.should.eql(object.objectId);
           body.should.not.eql(object);
@@ -72,7 +76,8 @@ describe('object', function() {
     async.series([
       // delete the object
       function(callback) {
-        parse.deleteObject(className, object.objectId, function(err, res, body) {
+        parse.deleteObject(className, object.objectId, function(err, res, body, success) {
+          success.should.be.true;
           should.not.exist(err);
           res.statusCode.should.eql(200);
 
@@ -81,7 +86,8 @@ describe('object', function() {
       },
       // query again to make sure that it was deleted
       function(callback) {
-        parse.getObject(className, object.objectId, function(err, res, body) {
+        parse.getObject(className, object.objectId, function(err, res, body, success) {
+          success.should.be.false;
           should.not.exist(err);
           res.statusCode.should.eql(404);
           should.exist(body.error);
@@ -93,6 +99,7 @@ describe('object', function() {
     });
   });
 });
+
 
 describe('objects', function() {
   var dogs = [
@@ -110,11 +117,13 @@ describe('objects', function() {
       // just to be sure, delete all data in the table
       function(callback) {
         // query all
-        parse.getObjects(className, function(err, res, body) {
+        parse.getObjects(className, function(err, res, body, success) {
+          success.should.be.true;
           var fetchedIds = _(body).pluck('objectId').sort();
           // delete all
           async.forEach(fetchedIds, function(item, callback) {
-            parse.deleteObject(className, item, function(err, res, body) {
+            parse.deleteObject(className, item, function(err, res, body, success) {
+              success.should.be.true;
               callback(err);
             });
           }, function(err, results) {
@@ -126,7 +135,8 @@ describe('objects', function() {
       function(callback) {
         async.forEach(dogs, 
           function(item, callback) {
-            parse.createObject(className, item, function(err, res, body) {
+            parse.createObject(className, item, function(err, res, body, success) {
+              success.should.be.true;
               objects.push(body);
               callback(err);
             });
@@ -146,7 +156,8 @@ describe('objects', function() {
   after(function(done) {
     async.forEach(objects, 
       function(item, callback) {
-        parse.deleteObject(className, item.objectId, function(err, res, body) {
+        parse.deleteObject(className, item.objectId, function(err, res, body, success) {
+          success.should.be.true;
           callback(err);
         });
       },
@@ -162,7 +173,8 @@ describe('objects', function() {
     objectIds = _(objects).pluck('objectId').sort();
 
     // query all
-    parse.getObjects(className, function(err, res, body) {
+    parse.getObjects(className, function(err, res, body, success) {
+      success.should.be.true;
       body.should.have.length(dogs.length);
 
       var fetchedIds = _(body).pluck('objectId').sort();
@@ -180,7 +192,8 @@ describe('objects', function() {
 
   it('supports query constraints', function(done) {
     var params = { where: {breed: "Maltese"} };
-    parse.getObjects(className, params, function(err, res, body) {
+    parse.getObjects(className, params, function(err, res, body, success) {
+      success.should.be.true;
       body.length.should.eql(2);
       var names = _(body).pluck('name').sort();
       names.should.eql(['Buddy', 'Princess']);
@@ -195,7 +208,8 @@ describe('objects', function() {
       function(callback) {
         var expected = _(objects).pluck('name').sort();
         var params = { order: 'name' };
-        parse.getObjects(className, params, function(err, res, body) {
+        parse.getObjects(className, params, function(err, res, body, success) {
+          success.should.be.true;
           body.length.should.eql(expected.length);
           var names = _(body).pluck('name');
           names.should.eql(expected);
@@ -208,7 +222,8 @@ describe('objects', function() {
       function(callback) {
         var expected = ['Princess', 'Buddy'];
         var params = { where: {breed: "Maltese"}, order: '-name' };
-        parse.getObjects(className, params, function(err, res, body) {
+        parse.getObjects(className, params, function(err, res, body, success) {
+          success.should.be.true;
           body.length.should.eql(expected.length);
           var names = _(body).pluck('name');
           names.should.eql(expected);

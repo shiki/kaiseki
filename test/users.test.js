@@ -43,14 +43,16 @@ var deleteUsers = function(callback) {
       async.waterfall([
         // login first
         function(callback) {
-          parse.loginUser(item.username, users[item.name].password, function(err, res, body) {
+          parse.loginUser(item.username, users[item.name].password, function(err, res, body, success) {
+            success.should.be.true;
             callback(err, body);
           });
         },
         // delete
         function(object, callback) {
           parse.sessionToken = object.sessionToken;
-          parse.deleteUser(object.objectId, function(err, res, body) {
+          parse.deleteUser(object.objectId, function(err, res, body, success) {
+            success.should.be.true;
             callback(err);
           });
         }
@@ -71,7 +73,8 @@ describe('user', function() {
   before(deleteUsers);
 
   it('can create', function(done) {
-    parse.createUser(user, function(err, res, body) {
+    parse.createUser(user, function(err, res, body, success) {
+      success.should.be.true;
       should.not.exist(err);
       should.exist(body.createdAt);
       should.exist(body.objectId);
@@ -84,7 +87,8 @@ describe('user', function() {
   });
 
   it('can get', function(done) {
-    parse.getUser(object.objectId, function(err, res, body) {
+    parse.getUser(object.objectId, function(err, res, body, success) {
+      success.should.be.true;
       should.exist(body.updatedAt);
       var compare = _.pick(object, 'name', 'gender', 'username', 'nickname', 'createdAt', 'objectId');
       compare.updatedAt = body.updatedAt;
@@ -94,7 +98,8 @@ describe('user', function() {
   });
 
   it('can login', function(done) {
-    parse.loginUser(object.username, object.password, function(err, res, body) {
+    parse.loginUser(object.username, object.password, function(err, res, body, success) {
+      success.should.be.true;
       body.sessionToken.should.eql(object.sessionToken);
       done();
     });
@@ -106,7 +111,8 @@ describe('user', function() {
       // update
       function(callback) {
         var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, object.sessionToken);
-        parse.updateUser(object.objectId, {nickname: newNick}, function(err, res, body) {
+        parse.updateUser(object.objectId, {nickname: newNick}, function(err, res, body, success) {
+          success.should.be.true;
           should.exist(body.updatedAt);
           callback(err);
         });
@@ -114,7 +120,8 @@ describe('user', function() {
 
       // test updated data
       function(callback) {
-        parse.getUser(object.objectId, function(err, res, body) {
+        parse.getUser(object.objectId, function(err, res, body, success) {
+          success.should.be.true;
           body.nickname.should.not.eql(object.nickname);
           body.nickname.should.eql(newNick);
           callback(err);
@@ -127,11 +134,29 @@ describe('user', function() {
 
   it('can delete', function(done) {
     var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, object.sessionToken);
-    parse.deleteUser(object.objectId, function(err, res, body) {
-      should.not.exist(err);
-      res.statusCode.should.eql(200);
-      done();
+    async.series([
+      // delete
+      function(callback) {
+        parse.deleteUser(object.objectId, function(err, res, body, success) {
+          success.should.be.true;
+          should.not.exist(err);
+          res.statusCode.should.eql(200);
+          callback(err);
+        });
+      },
+
+      // test with GET
+      function(callback) {
+        parse.getUser(object.objectId, function(err, res, body, success) {
+          success.should.be.false;
+          res.statusCode.should.eql(404);
+          callback(err);
+        });
+      }
+    ], function(err, results) {
+      done(err);
     });
+    
   });
 });
 
@@ -148,7 +173,8 @@ describe('users', function() {
       function(callback) {
         async.forEach(userValues, 
           function(item, callback) {
-            parse.createUser(item, function(err, res, body) {
+            parse.createUser(item, function(err, res, body, success) {
+              success.should.be.true;
               objects.push(body);
               callback(err);
             });
@@ -177,7 +203,8 @@ describe('users', function() {
     });
 
     // query all
-    parse.getUsers(function(err, res, body) {
+    parse.getUsers(function(err, res, body, success) {
+      success.should.be.true;
       body.should.have.length(userValues.length);
 
       var fetchedIds = _(body).pluck('objectId').sort();
@@ -194,7 +221,8 @@ describe('users', function() {
 
   it('supports query constraints', function(done) {
     var params = { where: {gender: "female"} };
-    parse.getUsers(params, function(err, res, body) {
+    parse.getUsers(params, function(err, res, body, success) {
+      success.should.be.true;
       body.length.should.eql(2);
       var names = _(body).pluck('name').sort();
       names.should.eql(['Maricris', 'Zennia']);
@@ -209,7 +237,8 @@ describe('users', function() {
       function(callback) {
         var expected = _(objects).pluck('name').sort();
         var params = { order: 'name' };
-        parse.getUsers(params, function(err, res, body) {
+        parse.getUsers(params, function(err, res, body, success) {
+          success.should.be.true;
           body.length.should.eql(expected.length);
           var names = _(body).pluck('name');
           names.should.eql(expected);
@@ -222,7 +251,8 @@ describe('users', function() {
       function(callback) {
         var expected = ['Zennia', 'Maricris'];
         var params = { where: {gender: "female"}, order: '-name' };
-        parse.getUsers(params, function(err, res, body) {
+        parse.getUsers(params, function(err, res, body, success) {
+          success.should.be.true;
           body.length.should.eql(expected.length);
           var names = _(body).pluck('name');
           names.should.eql(expected);

@@ -1,9 +1,9 @@
 {
   "name": "kaiseki",
   "description": "A Parse.com REST API Client for Node.js",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "homepage": "https://github.com/shiki/kaiseki",
-  "private": true,
+  "private": false,
   "author": {
     "name": "BJ Basañes (Shiki)",
     "email": "shikishiji@gmail.com"

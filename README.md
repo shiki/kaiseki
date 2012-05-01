@@ -35,7 +35,7 @@ You might want to read about the [REST API](https://parse.com/docs/rest) first b
 
 ### Callbacks
 
-All callbacks should follow this format: `function(error, response, body) { ... }`. This is because Kaiseki is based on [Request](https://github.com/mikeal/request) and I thought it would be best to pass the same callback parameters. The `error` and `response` parameters are passed as is. On most methods, `body` is changed and parsed from JSON for your convenience. 
+All callbacks should follow this format: `function(error, response, body, success) { ... }`. This is because Kaiseki is based on [Request](https://github.com/mikeal/request) and I thought it would be best to pass the same callback parameters. The `error` and `response` parameters are passed as is. On most methods, `body` is changed and parsed from JSON for your convenience. 
 
  * __error__: If there's an error during the request (e.g. no internet connection), this will not be empty. Note that if the API returns a `statusCode` that is not `2xx`, it is not marked as an error. 
 
@@ -47,6 +47,8 @@ All callbacks should follow this format: `function(error, response, body) { ... 
  Read more about the Response format [here](https://parse.com/docs/rest#general-responses).
 
  * __body__: On successful requests, this will be an object or array depending on the method called.
+
+ * __success__: A convenience parameter, this is a boolean indicating if the request was a success. 
 
 
 ### Users
