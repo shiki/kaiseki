@@ -3,17 +3,28 @@ Kaiseki
 
 A Parse.com [REST API](https://parse.com/docs/rest) client for Node.js
 
+
+
 Installing
 -------------
 
-I'll post this to npm later. For now, you can include this in your `package.json` as a Git reference:
+ * Install through npm:
 
-    "dependencies": {
-      "kaiseki": "git+ssh://git@github.com:shiki/kaiseki.git",
-      ...
-    }
+        npm install kaiseki
+
+ * Or in your `package.json`:
+
+        "dependencies": {
+          "kaiseki": "*",
+          ...
+        }
+ Then:
+
+        npm install
 
 Or you can just download the files and put it in your project.
+
+
 
 Usage
 -------------
