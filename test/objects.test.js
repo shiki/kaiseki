@@ -236,6 +236,16 @@ describe('objects', function() {
       done(err);
     });
   });
+
+  it('returns correct results on 404', function(done) {
+    var params = { where: { name: 'Dragon' } };
+    parse.getObjects(className, params, function(err, res, body, success) {
+      success.should.be.true;
+      body.length.should.eql(0);
+      
+      done();
+    });
+  });
   
 });
 
