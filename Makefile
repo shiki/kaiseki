@@ -1,4 +1,4 @@
 
 
 mocha:
-	@NODE_ENV=test ./node_modules/mocha/bin/mocha --reporter spec --timeout 10000
+	@NODE_ENV=test ./node_modules/mocha/bin/mocha --reporter spec --timeout 20000
