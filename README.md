@@ -220,7 +220,7 @@ The `body` in the callback is an array of the returned objects.
 Upload a local file. Specifying `fileName` is optional. If successful, the `body` result will contain the Parse `name` and `url` of the file. The value of `name` is what you will use for associating a Parse file to an object.
 
     var localFilePath = __dirname + '/images/apple.jpg';
-    kaiseki.uploadfile(localFilePath, function(err, res, body, success) {
+    kaiseki.uploadFile(localFilePath, function(err, res, body, success) {
       console.log('uploaded file url:', body.url);
       console.log('uploaded file name:', body.name);
     });
