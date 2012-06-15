@@ -284,6 +284,109 @@ Associating a file to an existing object:
         console.log('attached photo to an object');
     });
 
+### Roles
+
+Role methods are similar to the Object methods except that they don't require you to use a classname.
+
+#### createRole (data, callback)
+
+Creates a role and passes to `body` whatever you passed in `data` plus the returned `createdAt` field. You can only create a role if you provide the `kaiseki.masterKey` property.
+
+    var data = {
+      name: 'Administrator',
+      ACL: {
+          "*": {
+            "read": true
+          }
+        },
+      roles: {
+          "__op": "AddRelation",
+          "objects": [
+            {
+              "__type": "Pointer",
+              "className": "_Role",
+              "objectId": <role-id>
+            }
+          ]
+        },
+      users: {
+          "__op": "AddRelation",
+          "objects": [
+            {
+              "__type": "Pointer",
+              "className": "_User",
+              "objectId": <user-id>
+            }
+          ]
+        }
+    };
+
+    kaiseki.createRole(data, function(err, res, body) {
+      console.log('role created = ', body);
+      console.log('object id = ', body.objectId);
+    });
+
+#### getRole (objectId, params, callback)
+
+Gets a role based on the `objectId`. The `params` is currently unused but is there for a future use. You can pass in the callback function as the second parameter. 
+
+    kaiseki.getRole('<object-id>', function(err, res, body) {
+      console.log('found role = ', body);
+    });
+
+#### updateRole (objectId, data, callback)
+
+Updates a role. If successful, body will contain the `updatedAt` value. You can only update a role if you provide the `kaiseki.masterKey` property or the `kaiseki.sessionToken` property and if that user has write access to the role. 
+
+	var data = {
+      users: {
+          "__op": "RemoveRelation",
+          "objects": [
+            {
+              "__type": "Pointer",
+              "className": "_User",
+              "objectId": <user-id>
+            }
+          ]
+        }
+    };
+    
+    kaiseki.updateRole(data, function(err, res, body) {
+      console.log('role updated at = ', body.updatedAt);
+    });
+
+#### deleteRole (objectId, callback)
+
+Deletes a role. The REST API does not seem to return anything in the body so it's best to check for `res.statusCode` if the operation was successful. You can only delete a role if you provide the `kaiseki.masterKey` property or the `kaiseki.sessionToken` property and if that user has write access to the role. 
+
+    kaiseki.deleteRole('<object-id>', function(err, res, body) {
+      if (res.statusCode == 200)
+        console.log('deleted!');
+      else
+        console.log('failed!');
+    });
+
+#### getRoles (params, callback)
+
+Returns an array of roles in the class name. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken of for you. 
+
+If you do not want to pass in some query parameters, you can set the callback as the first parameter.
+
+The `body` in the callback is an array of the returned roles.
+
+    // get all objects (no parameters)
+    kaiseki.getRoles(function(err, res, body) {
+      console.log('all roles = ', body);
+    });
+
+    // query with parameters
+    var params = {
+      where: { name: "Administrator" }
+    };
+    kaiseki.getRoles(params, function(err, res, body) {
+      console.log('Administrator Role = ', body);
+    });
+
 
 ### GeoPoints
 
