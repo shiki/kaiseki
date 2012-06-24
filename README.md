@@ -357,10 +357,10 @@ Updates a role. If successful, body will contain the `updatedAt` value. You can 
 
 #### deleteRole (objectId, callback)
 
-Deletes a role. The REST API does not seem to return anything in the body so it's best to check for `res.statusCode` if the operation was successful. You can only delete a role if you provide the `kaiseki.masterKey` property or the `kaiseki.sessionToken` property and if that user has write access to the role. 
+Deletes a role. The REST API does not return anything in the body so it's best to check for `success` if the operation was successful. You can only delete a role if you provide the `kaiseki.masterKey` property or the `kaiseki.sessionToken` property and if that user has write access to the role. 
 
-    kaiseki.deleteRole('<object-id>', function(err, res, body) {
-      if (res.statusCode == 200)
+    kaiseki.deleteRole('<object-id>', function(err, res, body, success) {
+      if (success)
         console.log('deleted!');
       else
         console.log('failed!');
@@ -368,7 +368,7 @@ Deletes a role. The REST API does not seem to return anything in the body so it'
 
 #### getRoles (params, callback)
 
-Returns an array of roles in the class name. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken of for you. 
+Returns an array of roles. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken of for you. 
 
 If you do not want to pass in some query parameters, you can set the callback as the first parameter.
 
