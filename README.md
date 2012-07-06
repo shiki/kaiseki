@@ -123,7 +123,7 @@ Deletes a user. Like `updateUser()`, this needs a `sessionToken`.
 
 #### getUsers (params, callback)
 
-Returns an array of users. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken of for you. 
+Returns an array of users. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken care for you. 
 
 If you do not want to pass in some query parameters, you can set the callback as the first parameter.
 
@@ -204,7 +204,7 @@ Deletes an object. The REST API does not seem to return anything in the body so 
 
 #### getObjects (className, params, callback)
 
-Returns an array of objects in the class name. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken of for you. 
+Returns an array of objects in the class name. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken care for you. 
 
 If you do not want to pass in some query parameters, you can set the callback as the first parameter.
 
@@ -398,7 +398,7 @@ Deletes a role. The REST API does not return anything in the body so it's best t
 
 #### getRoles (params, callback)
 
-Returns an array of roles. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken of for you. 
+Returns an array of roles. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken care for you. 
 
 If you do not want to pass in some query parameters, you can set the callback as the first parameter.
 
