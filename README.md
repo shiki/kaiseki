@@ -143,6 +143,18 @@ The `body` in the callback is an array of the returned objects.
       console.log('female users = ', body);
     });
 
+#### requestPasswordReset (email, callback) {
+
+Just provide an email and this function will send the user an email to reset their password
+
+    kaiseki.requestPasswordReset('email@mail.com', function(err, res, body, success) {
+							
+		if (success) {
+			console.log('Successfully Sent Password Reset');
+		} else {
+			console.log('Error: ', err, body);
+		}
+	});
 
 ### Objects
 
@@ -210,6 +222,24 @@ The `body` in the callback is an array of the returned objects.
     };
     kaiseki.getObjects('Dogs', params, function(err, res, body) {
       console.log('Chow chow dogs = ', body);
+    });
+    
+#### countObjects (className, params, callback)
+
+Same as getObjects but returns a count in the `body.count` parameter without returning any objects.
+
+    // count all objects (no parameters)
+    kaiseki.countObjects('Dogs', function(err, res, body) {
+      console.log('number of dogs = ', body.count);
+    });
+
+    // query with parameters
+    var params = {
+      where: { breed: "Chow Chow" },
+      order: '-name'
+    };
+    kaiseki.getObjects('Dogs', params, function(err, res, body) {
+      console.log('Number of Chow chow dogs = ', body.count);
     });
 
 
