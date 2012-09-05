@@ -246,6 +246,36 @@ describe('objects', function() {
       done();
     });
   });
+
+  it('can count', function(done) {
+    async.parallel([
+      function(done) {
+        var params = { count: true };
+        parse.getObjects(className, params, function(err, res, body, success) {
+          success.should.be.true;
+          body.results.length.should.eql(dogs.length);
+          body.count.should.eql(dogs.length);
+          done();
+        });
+      },
+      function(done) {
+        var params = { 
+          where: { breed: 'Maltese' },
+          count: true 
+        };
+        parse.getObjects(className, params, function(err, res, body, success) {
+          success.should.be.true;
+          body.results.length.should.eql(2);
+          body.count.should.eql(2);
+          done();
+        });
+      }
+    ], function(err, results) {
+      should.not.exist(err);
+      done();
+    });
+
+  });
   
 });
 
