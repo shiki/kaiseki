@@ -329,6 +329,29 @@ Associating a file to an existing object:
         console.log('attached photo to an object');
     });
 
+### Push Notifications
+
+#### sendPushNotification (notification, callback)
+
+Send a push notification. 'notification' has to follow the data structure as described in the [Parse REST API](https://www.parse.com/docs/rest#push). The following code sample sends a notification to the broadcast channel (all devices) on all platforms (iOS and Android).
+
+*Please note:* For push notifications to work you have to configure your Parse app accordingly. Use the 'Settings > Push' section of your app's dashboard.
+
+    var notification = {
+      'channels': [''],
+      'data': {
+        "alert": "Tune in for the World Series, tonight at 8pm EDT"
+      }                  
+    };
+
+    kaiseki.sendPushNotification(notification, function(err, res, body, success) {
+      if(success) {
+        console.log('Push notification successfully sent:', body);
+      } else {
+        console.log('Could not send push notification:', err);
+      }
+    });
+
 ### Roles
 
 Role methods are similar to the Object methods except that they don't require you to use a classname.
