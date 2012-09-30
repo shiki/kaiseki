@@ -57,21 +57,43 @@ describe('roles', function() {
   after(deleteUsers);
 
   it('can create', function(done) {
-    var data = {
-      name: 'Moderators',
-      ACL: {
-        '*': { 'read': true }
-      }
-    };
-    parse.createRole(data, function(err, res, body, success) {
-      success.should.be.true;
-      should.exist(body.createdAt);
-      should.exist(body.objectId);
-      should.exist(body.ACL);
-      body.name.should.eql(data.name);
+    async.series([
+      function(done) {
+        var data = {
+          ACL: {
+            '*': { 'read': true }
+          }
+        };
+        parse.createRole(data, function(err, res, body, success) {
+          success.should.be.false;
+          should.not.exist(body.ACL);
 
-      role = body;
-      done();
+          body.code.should.eql(135);
+          body.error.should.eql('Role names must be specified.');
+
+          done(err);
+        });
+      },
+      function(done) {
+        var data = {
+          name: 'Moderators',
+          ACL: {
+            '*': { 'read': true }
+          }
+        };
+        parse.createRole(data, function(err, res, body, success) {
+          success.should.be.true;
+          should.exist(body.createdAt);
+          should.exist(body.objectId);
+          should.exist(body.ACL);
+          body.name.should.eql(data.name);
+
+          role = body;
+          done(err);
+        });
+      }
+    ], function(err) {
+      done(err);
     });
   });
 
@@ -87,7 +109,7 @@ describe('roles', function() {
   });
 
   it('can update', function(done) {
-    
+
     async.waterfall([
       // create a dummy user
       function(callback) {
@@ -113,7 +135,7 @@ describe('roles', function() {
               success.should.be.true;
               callback(err);
             });
-          }, 
+          },
           // Verify that the user was added to the role
           function(callback) {
             var params = {
@@ -121,7 +143,7 @@ describe('roles', function() {
                 '$relatedTo': {
                   object: { '__type': 'Pointer', className: '_Role', objectId: role.objectId },
                   key: 'users'
-                }  
+                }
               }
             };
             parse.getUsers(params, function(err, res, body, success) {
@@ -148,7 +170,7 @@ describe('roles', function() {
         parse.deleteRole(role.objectId, function(err, res, body, success) {
           success.should.be.true;
           callback()
-        });  
+        });
       },
       function(callback) {
         parse.getRole(role.objectId, function(err, res, body, success) {

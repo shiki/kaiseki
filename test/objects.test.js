@@ -16,17 +16,41 @@ describe('object', function() {
   var object = null; // the Parse object we'll be passing along
 
   it('can create', function(done) {
-    parse.createObject(className, dog, function(err, res, body, success) {
-      success.should.be.true;
-      should.not.exist(err);
-      object = body;
+    async.parallel([
+      function(done) {
+        parse.createObject(className, dog, function(err, res, body, success) {
+          success.should.be.true;
+          should.not.exist(err);
+          object = body;
 
-      object.name.should.eql(dog.name);
-      object.breed.should.eql(dog.breed);
-      should.exist(object.createdAt);
-      should.exist(object.objectId);
+          object.name.should.eql(dog.name);
+          object.breed.should.eql(dog.breed);
+          should.exist(object.createdAt);
+          should.exist(object.objectId);
 
-      done();
+          done(err);
+        });
+      },
+      function(done) {
+        var invalid = {
+          name: 'Woof',
+          owner: {
+            __type: 'InvalidName'
+          }
+        };
+        parse.createObject(className, invalid, function(err, res, body, success) {
+          success.should.be.false;
+          should.not.exist(err);
+          should.not.exist(body.name);
+          should.not.exist(body.owner);
+
+          body.code.should.eql(111);
+
+          done(err);
+        });
+      }
+    ], function(err) {
+      done(err);
     });
   });
 

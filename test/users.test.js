@@ -73,16 +73,34 @@ describe('user', function() {
   before(deleteUsers);
 
   it('can create', function(done) {
-    parse.createUser(user, function(err, res, body, success) {
-      success.should.be.true;
-      should.not.exist(err);
-      should.exist(body.createdAt);
-      should.exist(body.objectId);
-      should.exist(body.sessionToken);
-      user.gender.should.eql(body.gender);
-      object = body;
+    async.parallel([
+      function(done) {
+        parse.createUser(user, function(err, res, body, success) {
+          success.should.be.true;
+          should.not.exist(err);
+          should.exist(body.createdAt);
+          should.exist(body.objectId);
+          should.exist(body.sessionToken);
+          user.gender.should.eql(body.gender);
+          object = body;
 
-      done();
+          done();
+        });
+      },
+      // Test a failure
+      function(done) {
+        var incomplete = {name: 'Ling'};
+        parse.createUser(incomplete, function(err, res, body, success) {
+          success.should.be.false;
+          should.not.exist(body.name);
+          body.code.should.eql(201);
+          body.error.should.eql('missing user password');
+
+          done(err);
+        });
+      }
+    ], function(err, results) {
+      done(err);
     });
   });
 
