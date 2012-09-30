@@ -116,7 +116,7 @@ describe('file', function() {
 
     parse.uploadFile(imageFilePath, function(err, res, uploadBody, success) {
       success.should.be.true;
-      
+
       var dog = {
         name: 'Paaka',
         breed: 'Rottweiler',
@@ -183,6 +183,6 @@ describe('file', function() {
     ], function(err, results) {
       done();
     });
-    
+
   });
 });
