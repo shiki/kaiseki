@@ -27,7 +27,7 @@ describe('object', function() {
       should.exist(object.objectId);
 
       done();
-    });    
+    });
   });
 
   it('can get', function(done) {
@@ -38,7 +38,7 @@ describe('object', function() {
       object.updatedAt = body.updatedAt;
 
       body.should.eql(object);
-      
+
       done();
     });
   });
@@ -63,8 +63,8 @@ describe('object', function() {
           body.objectId.should.eql(object.objectId);
           body.should.not.eql(object);
           body.name.should.eql(newName);
-          
-          callback(null, body);  
+
+          callback(null, body);
         });
       }
     ], function(err, results) {
@@ -91,7 +91,7 @@ describe('object', function() {
           should.not.exist(err);
           res.statusCode.should.eql(404);
           should.exist(body.error);
-          callback(null);  
+          callback(null);
         });
       }
     ], function(err, results) {
@@ -133,14 +133,14 @@ describe('objects', function() {
       },
 
       function(callback) {
-        async.forEach(dogs, 
+        async.forEach(dogs,
           function(item, callback) {
             parse.createObject(className, item, function(err, res, body, success) {
               success.should.be.true;
               objects.push(body);
               callback(err);
             });
-          }, 
+          },
           function(err) {
             objects = _(objects).sortBy('objectId');
             callback(err);
@@ -154,7 +154,7 @@ describe('objects', function() {
 
   // delete objects after testing
   after(function(done) {
-    async.forEach(objects, 
+    async.forEach(objects,
       function(item, callback) {
         parse.deleteObject(className, item.objectId, function(err, res, body, success) {
           success.should.be.true;
@@ -213,7 +213,7 @@ describe('objects', function() {
           body.length.should.eql(expected.length);
           var names = _(body).pluck('name');
           names.should.eql(expected);
-          
+
           callback();
         });
       },
@@ -242,7 +242,7 @@ describe('objects', function() {
     parse.getObjects(className, params, function(err, res, body, success) {
       success.should.be.true;
       body.length.should.eql(0);
-      
+
       done();
     });
   });
@@ -259,9 +259,9 @@ describe('objects', function() {
         });
       },
       function(done) {
-        var params = { 
+        var params = {
           where: { breed: 'Maltese' },
-          count: true 
+          count: true
         };
         parse.getObjects(className, params, function(err, res, body, success) {
           success.should.be.true;
@@ -276,7 +276,32 @@ describe('objects', function() {
     });
 
   });
-  
+
+  it('can count using countObjects', function(done) {
+    async.parallel([
+      function(done) {
+        parse.countObjects(className, function(err, res, body, success) {
+          success.should.be.true;
+          body.count.should.eql(dogs.length);
+          done();
+        });
+      },
+      function(done) {
+        var params = {
+          where: { breed: 'Maltese' }
+        };
+        parse.countObjects(className, params, function(err, res, body, success) {
+          success.should.be.true;
+          body.count.should.eql(2);
+          done();
+        });
+      }
+    ], function(err, results) {
+      should.not.exist(err);
+      done();
+    });
+  });
+
 });
 
 

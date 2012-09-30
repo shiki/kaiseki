@@ -224,6 +224,21 @@ The `body` in the callback is an array of the returned objects.
       console.log('Chow chow dogs = ', body);
     });
 
+##### Using `count` with `getObjects`.
+
+You are allowed to pass in the `count` parameter when using `getObjects`. If you do, the value of `body` will be an object with the properties `results` and `count`. The `results` property contains the objects resulting from the query. See more about counting [here](https://parse.com/docs/rest#queries-counting). If you only need `count`, you may also use the helper method `countObjects`. Using `getObjects` for counting has the advantage of querying for a _limited_ list of objects and getting the total possible objects that can be queried at the same time.
+
+    // Get 10 objects, but also return the total number of objects
+    var params = {
+      where: { breed: "Chow Chow" },
+      limit: 10,
+      count: true
+    };
+    kaiseki.getObjects('Dogs', params, function(err, res, body) {
+      console.log('The first 10 Chow chow dogs = ', body.results);
+      console.log('Total number of Chow chow dogs = ', body.count);
+    });
+
 #### countObjects (className, params, callback)
 
 Same as getObjects but returns a count in the `body.count` parameter without returning any objects.
