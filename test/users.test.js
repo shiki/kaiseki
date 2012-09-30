@@ -31,7 +31,7 @@ var users = {
   }
 };
 // users as an array
-var userValues = _(users).values(); 
+var userValues = _(users).values();
 
 // for "before" hook
 var deleteUsers = function(callback) {
@@ -156,7 +156,43 @@ describe('user', function() {
     ], function(err, results) {
       done(err);
     });
-    
+
+  });
+
+  it('can request password reset', function(done) {
+    var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY);
+    async.parallel([
+      // Test that we can successfully request a reset.
+      function(callback) {
+        var joel = _.clone(users['Joel']);
+        joel.email = 'jb1blahblahblahblah@parse.com';
+        parse.createUser(joel, function(err, res, body, success) {
+          success.should.be.true;
+          parse.requestPasswordReset(joel.email, function(err, res, body, success) {
+            success.should.be.true;
+            should.exist(body);
+            _.isObject(body).should.be.true;
+            should.not.exist(err);
+            res.statusCode.should.eql(200);
+
+            callback(err);
+          });
+        });
+      },
+      // Test that using a non-existent email will result in an error.
+      function(callback) {
+        var email = 'probablyandunknownuser@parse.com';
+        parse.requestPasswordReset(email, function(err, res, body, success) {
+          success.should.be.false;
+          body.code.should.eql(205);
+          body.error.should.eql('no user found with email ' + email);
+
+          callback(err);
+        });
+      }
+    ], function(err, results) {
+      done(err);
+    });
   });
 });
 
@@ -171,14 +207,14 @@ describe('users', function() {
       deleteUsers, // just to be sure
 
       function(callback) {
-        async.forEach(userValues, 
+        async.forEach(userValues,
           function(item, callback) {
             parse.createUser(item, function(err, res, body, success) {
               success.should.be.true;
               objects.push(body);
               callback(err);
             });
-          }, 
+          },
           function(err) {
             objects = _(objects).sortBy('objectId');
             callback(err);
@@ -211,7 +247,7 @@ describe('users', function() {
       objectIds.should.eql(fetchedIds);
 
       body = _(body).sortBy('objectId');
-      // copy updatedAt for easy comparision 
+      // copy updatedAt for easy comparision
       _(objectsToCompare).each(function(item, index) { item.updatedAt = body[index].updatedAt; });
       objectsToCompare.should.eql(body);
 
@@ -242,7 +278,7 @@ describe('users', function() {
           body.length.should.eql(expected.length);
           var names = _(body).pluck('name');
           names.should.eql(expected);
-          
+
           callback();
         });
       },
@@ -265,5 +301,5 @@ describe('users', function() {
       done(err);
     });
   });
-  
+
 });
