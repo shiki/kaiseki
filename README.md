@@ -46,9 +46,9 @@ You might want to read about the [REST API](https://parse.com/docs/rest) first b
 
 ### Callbacks
 
-All callbacks should follow this format: `function(error, response, body, success) { ... }`. This is because Kaiseki is based on [Request](https://github.com/mikeal/request) and I thought it would be best to pass the same callback parameters. The `error` and `response` parameters are passed as is. On most methods, `body` is changed and parsed from JSON for your convenience. 
+All callbacks should follow this format: `function(error, response, body, success) { ... }`. This is because Kaiseki is based on [Request](https://github.com/mikeal/request) and I thought it would be best to pass the same callback parameters. The `error` and `response` parameters are passed as is. On most methods, `body` is changed and parsed from JSON for your convenience.
 
- * __error__: If there's an error during the request (e.g. no internet connection), this will not be empty. Note that if the API returns a `statusCode` that is not `2xx`, it is not marked as an error. 
+ * __error__: If there's an error during the request (e.g. no internet connection), this will not be empty. Note that if the API returns a `statusCode` that is not `2xx`, it is not marked as an error.
 
  * __response__: You can check lots of info about the request in here. For example, the REST API will return a `response.statusCode` value of `4xx` on failures. In these cases, the API will still return a JSON object containing the fields `code` and `error`. You can get this in the `body` parameter.
 
@@ -59,7 +59,7 @@ All callbacks should follow this format: `function(error, response, body, succes
 
  * __body__: On successful requests, this will be an object or array depending on the method called.
 
- * __success__: A convenience parameter, this is a boolean indicating if the request was a success. 
+ * __success__: A convenience parameter, this is a boolean indicating if the request was a success.
 
 
 ### Users
@@ -70,7 +70,7 @@ This will pass to `body` whatever you passed in `data` plus the returned `create
 
     var userInfo = {
       // required
-      username: 'maricris', 
+      username: 'maricris',
       password: 'whew',
 
       name: 'Maricris',
@@ -86,7 +86,7 @@ This will pass to `body` whatever you passed in `data` plus the returned `create
 #### getUser (objectId, params, callback)
 
 Gets a user info based on the `objectId` (user id). The `params` is currently unused but is there for a
-future use. You can pass in the callback function as the second parameter. 
+future use. You can pass in the callback function as the second parameter.
 
     kaiseki.getUser('<object-id>', function(err, res, body) {
       console.log('user info = ', body);
@@ -111,7 +111,7 @@ Updates a user object (if that wasn't obvious). This requires a sessionToken rec
 
 #### deleteUser (objectId, data, callback)
 
-Deletes a user. Like `updateUser()`, this needs a `sessionToken`. 
+Deletes a user. Like `updateUser()`, this needs a `sessionToken`.
 
     kaiseki.sessionToken = 'le session token';
     kaiseki.deleteUser('<object-id>', function(err, res, body) {
@@ -123,7 +123,7 @@ Deletes a user. Like `updateUser()`, this needs a `sessionToken`.
 
 #### getUsers (params, callback)
 
-Returns an array of users. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken care for you. 
+Returns an array of users. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken care of for you.
 
 If you do not want to pass in some query parameters, you can set the callback as the first parameter.
 
@@ -148,13 +148,13 @@ The `body` in the callback is an array of the returned objects.
 Just provide an email and this function will send the user an email to reset their password
 
     kaiseki.requestPasswordReset('email@mail.com', function(err, res, body, success) {
-							
-		if (success) {
-			console.log('Successfully Sent Password Reset');
-		} else {
-			console.log('Error: ', err, body);
-		}
-	});
+
+    if (success) {
+      console.log('Successfully Sent Password Reset');
+    } else {
+      console.log('Error: ', err, body);
+    }
+  });
 
 ### Objects
 
@@ -177,7 +177,7 @@ Creates an object and passes to `body` whatever you passed in `data` plus the re
 
 #### getObject (className, objectId, params, callback)
 
-Gets an object based on the `objectId`. The `params` is currently unused but is there for a future use. You can pass in the callback function as the second parameter. 
+Gets an object based on the `objectId`. The `params` is currently unused but is there for a future use. You can pass in the callback function as the second parameter.
 
     kaiseki.getObject('Dogs', '<object-id>', function(err, res, body) {
       console.log('found object = ', body);
@@ -204,7 +204,7 @@ Deletes an object. The REST API does not seem to return anything in the body so 
 
 #### getObjects (className, params, callback)
 
-Returns an array of objects in the class name. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken care for you. 
+Returns an array of objects in the class name. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken care of for you.
 
 If you do not want to pass in some query parameters, you can set the callback as the first parameter.
 
@@ -223,7 +223,7 @@ The `body` in the callback is an array of the returned objects.
     kaiseki.getObjects('Dogs', params, function(err, res, body) {
       console.log('Chow chow dogs = ', body);
     });
-    
+
 #### countObjects (className, params, callback)
 
 Same as getObjects but returns a count in the `body.count` parameter without returning any objects.
@@ -265,7 +265,7 @@ This is a more specific upload utility. You can specify the buffer or string to 
     });
 
 Uploading a string as a text file:
-    
+
     var buffer = 'my text file contents';
     kaiseki.uploadFileBuffer(buffer, 'text/plain', 'readme.txt', function(err, res, body, success) {
       console.log('uploaded file details', body);
@@ -273,7 +273,7 @@ Uploading a string as a text file:
 
 #### deleteFile (name, callback)
 
-Deleting files require the Parse API master key. The value of `name` should be the name generated by Parse during upload. 
+Deleting files require the Parse API master key. The value of `name` should be the name generated by Parse during upload.
 
     kaiseki.masterKey = 'your-api-master-key';
     var parseFileName = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx-files.apple.jpg';
@@ -302,7 +302,7 @@ Once you have the Parse file `name` after calling `uploadFile()` or `uploadFileB
     });
 
 Associating a file to an existing object:
-    
+
     var orange = {
       photo: {
         name: parseFileName,
@@ -358,7 +358,7 @@ Creates a role and passes to `body` whatever you passed in `data` plus the retur
 
 #### getRole (objectId, params, callback)
 
-Gets a role based on the `objectId`. The `params` is currently unused but is there for a future use. You can pass in the callback function as the second parameter. 
+Gets a role based on the `objectId`. The `params` is currently unused but is there for a future use. You can pass in the callback function as the second parameter.
 
     kaiseki.getRole('<object-id>', function(err, res, body) {
       console.log('found role = ', body);
@@ -366,9 +366,9 @@ Gets a role based on the `objectId`. The `params` is currently unused but is the
 
 #### updateRole (objectId, data, callback)
 
-Updates a role. If successful, body will contain the `updatedAt` value. You can only update a role if you provide the `kaiseki.masterKey` property or the `kaiseki.sessionToken` property and if that user has write access to the role. 
+Updates a role. If successful, body will contain the `updatedAt` value. You can only update a role if you provide the `kaiseki.masterKey` property or the `kaiseki.sessionToken` property and if that user has write access to the role.
 
-	var data = {
+    var data = {
       users: {
           "__op": "RemoveRelation",
           "objects": [
@@ -380,14 +380,14 @@ Updates a role. If successful, body will contain the `updatedAt` value. You can 
           ]
         }
     };
-    
+
     kaiseki.updateRole(data, function(err, res, body) {
       console.log('role updated at = ', body.updatedAt);
     });
 
 #### deleteRole (objectId, callback)
 
-Deletes a role. The REST API does not return anything in the body so it's best to check for `success` if the operation was successful. You can only delete a role if you provide the `kaiseki.masterKey` property or the `kaiseki.sessionToken` property and if that user has write access to the role. 
+Deletes a role. The REST API does not return anything in the body so it's best to check for `success` if the operation was successful. You can only delete a role if you provide the `kaiseki.masterKey` property or the `kaiseki.sessionToken` property and if that user has write access to the role.
 
     kaiseki.deleteRole('<object-id>', function(err, res, body, success) {
       if (success)
@@ -398,7 +398,7 @@ Deletes a role. The REST API does not return anything in the body so it's best t
 
 #### getRoles (params, callback)
 
-Returns an array of roles. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken care for you. 
+Returns an array of roles. The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken care for you.
 
 If you do not want to pass in some query parameters, you can set the callback as the first parameter.
 
