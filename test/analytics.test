@@ -1,0 +1,18 @@
+var config = require('./config');
+var should = require('should');
+var async = require('async');
+var Kaiseki = require('../lib/kaiseki');
+var _ = require('underscore');
+
+var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY);
+
+describe('analytics', function() {
+	it ('can update app open', function(done) {
+		parse.appOpened(null, function(err, res, body, success) {
+			success.should.be.true;
+			should.not.exist(err);
+
+			done(err);
+		});
+	});	
+});
