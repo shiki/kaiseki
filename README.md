@@ -473,6 +473,20 @@ You can set [GeoPoints](https://parse.com/docs/rest#geo) by simply setting a `"G
         console.log('Created a place with a GeoPoint.');
     });
 
+### Parse Analytics
+
+You can have your Parse app's AppOpened analytics value incremented by using the appOpened function.
+
+  var updatetime = {
+      at: {
+          __type: 'Date',
+            iso: "2013-10-25T21:23:19Z"
+         }
+     };
+  kaiseki.appOpened(updateTime, function(err, res, body, success) {
+    // do nothing
+    })
+
 Tests
 -------------
 The tests use [mocha](http://visionmedia.github.com/mocha/) and have to be run on an empty Parse application. Please provide your own API keys in `test/config.js`. To run the test:
