@@ -475,17 +475,17 @@ You can set [GeoPoints](https://parse.com/docs/rest#geo) by simply setting a `"G
 
 ### Parse Analytics
 
-You can have your Parse app's AppOpened analytics value incremented by using the appOpened function.
+You can user [Parse Analytics](https://parse.com/docs/rest#analytics) to have your app's AppOpened analytics value incremented by using the appOpened function. 
 
-      var updatetime = {
-          at: {
-              __type: 'Date',
-                iso: "2013-10-25T21:23:19Z"
-             }
-         };
-      kaiseki.appOpened(updateTime, function(err, res, body, success) {
-        // do nothing
-      });
+    var updatetime = {
+        at: {
+            __type: 'Date',
+              iso: "2013-10-25T21:23:19Z"
+           }
+       };
+    kaiseki.appOpened(updateTime, function(err, res, body, success) {
+      // do nothing
+    });
 
 Tests
 -------------
