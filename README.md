@@ -176,9 +176,18 @@ Creates an object and passes to `body` whatever you passed in `data` plus the re
 
 #### getObject (className, objectId, params, callback)
 
-Gets an object based on the `objectId`. The `params` is currently unused but is there for a future use. You can pass in the callback function as the second parameter.
+Gets an object based on the `objectId`. 
 
-    kaiseki.getObject('<class-name>', '<object-id>', function(err, res, body, success) {
+The `params` parameter can be an object containing the query options as described [here](https://parse.com/docs/rest#queries-basic). Note that unlike the Parse API Doc, you do not have to pass in strings for the parameter values. This is all taken care of for you.
+
+If you do not want to pass in some query parameters, you can set the callback as the second parameter.
+
+    // query with parameters
+    var params = {
+      where: { breed: "Chow Chow" },
+      order: '-name'
+    };
+    kaiseki.getObject('<class-name>', '<object-id>', params, function(err, res, body, success) {
       console.log('found object = ', body);
     });
 
