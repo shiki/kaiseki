@@ -14,9 +14,9 @@
   },
   "main": "./index.js",
   "dependencies": {
-    "request": "2.11.4",
-    "underscore": "1.4.0",
-    "mime": "1.2.7"
+    "request": "2.27.x",
+    "underscore": "1.5.x",
+    "mime": "1.2.x"
   },
   "devDependencies": {
     "mocha": "*",
