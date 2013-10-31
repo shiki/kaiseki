@@ -478,18 +478,18 @@ You can set [GeoPoints](https://parse.com/docs/rest#geo) by simply setting a `"G
 You can user [Parse Analytics](https://parse.com/docs/rest#analytics) to send analytic events sent to you app.
 
 To record an AppOpened event use like this.
-  kaiseki.sendAnalyticsEvent('AppOpened', function(err, res, body, success) {
-    // do nothing
-  });
+    kaiseki.sendAnalyticsEvent('AppOpened', function(err, res, body, success) {
+      // do nothing
+    });
 
 To record a custom event, let's say call search, use it like this.
-  parse.sendAnalyticsEvent('Search', {
-      "priceRange": "1000-1500",
-      "source": "craigslist",
-      "dayType": "weekday"}, 
-    function(err, res, body, success) {
-    // do nothing
-  );
+    parse.sendAnalyticsEvent('Search', {
+        "priceRange": "1000-1500",
+        "source": "craigslist",
+        "dayType": "weekday"}, 
+      function(err, res, body, success) {
+      // do nothing
+    );
   
 Tests
 -------------
