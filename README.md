@@ -475,18 +475,22 @@ You can set [GeoPoints](https://parse.com/docs/rest#geo) by simply setting a `"G
 
 ### Parse Analytics
 
-You can user [Parse Analytics](https://parse.com/docs/rest#analytics) to have your app's AppOpened analytics value incremented by using the appOpened function. 
+You can user [Parse Analytics](https://parse.com/docs/rest#analytics) to send analytic events sent to you app.
 
-    var updatetime = {
-        at: {
-            __type: 'Date',
-              iso: "2013-10-25T21:23:19Z"
-           }
-       };
-    kaiseki.appOpened(updateTime, function(err, res, body, success) {
+To record an AppOpened event use like this.
+    kaiseki.sendAnalyticsEvent('AppOpened', function(err, res, body, success) {
       // do nothing
     });
 
+To record a custom event, let's say call search, use it like this.
+  parse.sendAnalyticsEvent('Search', {
+      "priceRange": "1000-1500",
+      "source": "craigslist",
+      "dayType": "weekday"}, 
+    function(err, res, body, success) {
+    // do nothing
+  );
+  
 Tests
 -------------
 The tests use [mocha](http://visionmedia.github.com/mocha/) and have to be run on an empty Parse application. Please provide your own API keys in `test/config.js`. To run the test:
