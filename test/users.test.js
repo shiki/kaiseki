@@ -66,7 +66,7 @@ var deleteUsers = function(callback) {
 };
 
 
-describe('user', function() {
+describe.only('user', function() {
   var object = null; // the Parse user object
   var user = users['Zennia'];
 
@@ -119,6 +119,16 @@ describe('user', function() {
     parse.loginUser(object.username, object.password, function(err, res, body, success) {
       success.should.be.true;
       body.sessionToken.should.eql(object.sessionToken);
+      done();
+    });
+  });
+
+  it('can get current', function(done){
+    var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY);
+    parse.getCurrentUser(object.sessionToken, function(err, res, body, success){
+      body.nickname.should.eql(object.nickname);
+      body.objectId.should.eql(object.objectId);
+      success.should.be.true;
       done();
     });
   });
