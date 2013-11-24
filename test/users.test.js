@@ -66,7 +66,7 @@ var deleteUsers = function(callback) {
 };
 
 
-describe.only('user', function() {
+describe('user', function() {
   var object = null; // the Parse user object
   var user = users['Zennia'];
 
