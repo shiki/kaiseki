@@ -124,8 +124,8 @@ describe('user', function() {
   });
 
   it('can get current', function(done) {
-    var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY);
-    parse.getCurrentUser(object.sessionToken, function(err, res, body, success) {
+    var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, object.sessionToken);
+    parse.getCurrentUser(function(err, res, body, success) {
       body.nickname.should.eql(object.nickname);
       body.objectId.should.eql(object.objectId);
       success.should.be.true;

@@ -100,11 +100,12 @@ Log in a user. This will give you a user's `sessionToken` that you can use in `u
       console.log('user logged in with session token = ', body.sessionToken);
     });
 
-#### getCurrentUser (sessionToken, callback)
+#### getCurrentUser (callback)
 
-Get active user by passing a user's `sessionToken`. Use `loginUser` to obtain the session token. You can also use this function to validate a `sessionToken`.
+Get active user based on the current`sessionToken`. Use `loginUser` or `createUser` to obtain the session token. You can also use this function to validate a `sessionToken`.
 
-    kaiseki.getCurrentUser(sessionToken, function(err, res, body, success) {
+    kaiseki.sessionToken = 'le session token';
+    kaiseki.getCurrentUser(function(err, res, body, success) {
       if (success)
         console.log('Session token is valid for user ', body.username);
     });
