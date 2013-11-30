@@ -115,7 +115,7 @@ Get active user based on the current`sessionToken`. Use `loginUser` or `createUs
 Updates a user object (if that wasn't obvious). This requires a sessionToken received from `loginUser` or `createUser`. If successful, body will contain the `updatedAt` value.
 
     kaiseki.sessionToken = 'le session token';
-    kaiseki.updateUser({name: 'new name'}, function(err, res, body, success) {
+    kaiseki.updateUser('<object-id>', {name: 'new name'}, function(err, res, body, success) {
       console.log('updated at = ', body.updatedAt);
     });
 
