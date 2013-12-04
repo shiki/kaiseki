@@ -1,7 +1,7 @@
 {
   "name": "kaiseki",
   "description": "A Parse.com REST API Client for Node.js",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "homepage": "https://github.com/shiki/kaiseki",
   "private": false,
   "author": {
