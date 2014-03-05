@@ -326,6 +326,21 @@ describe('objects', function() {
     });
   });
 
+  it('can create in batch', function(done) {
+    async.parallel([
+      function(done) {
+        parse.createObjects(className, dogs, function(err, res, body, success) {
+          success.should.be.true;
+          should.not.exist(err);
+
+          done(err);
+        });
+      }
+    ], function(err) {
+      done(err);
+    });
+  });
+
 });
 
 

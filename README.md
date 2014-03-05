@@ -184,6 +184,26 @@ Creates an object and passes to `body` whatever you passed in `data` plus the re
       console.log('object id = ', body.objectId);
     });
 
+#### createObjects (className, data, callback)
+
+Creates objects and passes to `body` whatever you passed in `data` plus the returned `createdAt` field for each object.
+
+    var dogs = [
+      {
+        name: 'Prince',
+        breed: 'Pomeranian'
+      },
+      {
+        name: 'Queen',
+        breed: 'Dandie Dinmont Terrier'
+      }
+    ]
+    var className = 'Dog';
+
+    kaiseki.createObjects(className, dogs, function(err, res, body, success) {
+      console.log('objects created = ', body);
+    });
+
 #### getObject (className, objectId, params, callback)
 
 Gets an object based on the `objectId`.
