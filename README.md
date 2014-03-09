@@ -232,6 +232,37 @@ Updates an object. If successful, body will contain the `updatedAt` value.
       console.log('object updated at = ', body.updatedAt);
     });
 
+#### updateObjects (className, updates, callback)
+
+Updates objects of specified className.
+
+Returns an array of objects with `updatedAt` value.
+
+    /*
+    An update contains an object-id and data fields to update
+    {
+      objectId: '<object-id>',
+      data: '<data-object>'
+    }
+    */
+
+    var updates = [ 
+      { objectId: 'Q1BfhrqB30', data: { breed: 'Chow Chow' } },
+      { objectId: 'VS5JzNyp2g', data: { breed: 'Maltese' } },
+      { objectId: 'XeTBhTW4ig', data: { breed: 'Dalmatian' } },
+      { objectId: 'lyDBcnsTc3', data: { breed: 'Pomeranian' } } 
+    ];
+
+    var className = 'Dog';
+
+    kaiseki.updateObjects(className, updates, function(err, res, body, success) {
+      for (var i = 0; i < body.length; i++) {
+        object = body[i];
+        console.log('objects updated = at ', object.updatedAt);
+      }
+    });
+
+
 #### deleteObject (className, objectId, callback)
 
 Deletes an object.
