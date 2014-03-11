@@ -341,6 +341,78 @@ describe('objects', function() {
     });
   });
 
+  it('can update in batch', function(done) {
+
+    var updates = [],
+        // dictionary for testing
+        map = {},
+        newBreed = "",
+        objectId = "";
+
+    async.series([
+
+      // prepare updates array
+      function(callback) {
+
+        for (var i = 0; i < objectIds.length; i++) {
+
+          newBreed += i;
+          objectId = objectIds[i];
+
+          updates.push({
+            objectId: objectId,
+            data: {
+              breed: newBreed
+            }
+          });
+
+          map[objectId] = newBreed;
+
+        }
+
+        callback(null);
+
+      },
+      // update the objects
+      function(callback) {
+        parse.updateObjects(className, updates, function(err, res, body, success) {
+          success.should.be.true;
+          should.not.exist(err);
+          callback(null, body);
+        });
+      },
+
+      // retrieve objects and make sure that updates are reflected
+      function(callback) {
+
+        parse.getObjects(className,{
+          where: {
+            objectId: {$in: objectIds}
+          }
+        }, function(err, res, body, success) {
+
+          success.should.be.true;
+          should.not.exist(err);
+
+          var dog = null,
+              newBreed = "";
+
+          for (var i = 0; i < body.length; i++) {
+            dog = body[i];
+            newBreed = map[dog.objectId];
+            dog.breed.should.eql(newBreed);
+            should.exist(dog.updatedAt);
+          }
+
+          callback(null, body);
+        });
+      }
+    ], function(err, results) {
+      done();
+    });
+
+  });
+
 });
 
 
