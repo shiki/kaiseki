@@ -525,6 +525,20 @@ Send a push notification. The `data` parameter has to follow the data structure 
         console.log('Could not send push notification:', err);
       }
     });
+    
+### Cloud Functions
+
+#### cloudRun (functionName, data, callback)
+
+This will send a POST request to a cloud code function with the `data` that you pass and return what your cloud code function sends back to `body`.
+
+    var data = {
+      name: 'Ross'
+    };
+    
+    kaiseki.cloudRun('HelloWorld', data, function(err, res, body, success) {
+      console.log('The cloud code function returned: ', body);
+    });
 
 ### GeoPoints
 
