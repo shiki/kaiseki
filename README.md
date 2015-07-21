@@ -442,6 +442,13 @@ Upload a local file. Specifying `fileName` is optional. If successful, the `body
     kaiseki.uploadFile(localFilePath, function(err, res, body, success) {
       console.log('uploaded file url:', body.url);
       console.log('uploaded file name:', body.name);
+      /* to assign the new file to your object
++        yourObj["field"]={
++                "name": body.name,
++                "__type": "File"
++            }
++        yourObj.save();
++      */
     });
 
 #### uploadFileBuffer (buffer, contentType, fileName, callback)
