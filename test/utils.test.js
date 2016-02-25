@@ -1,6 +1,6 @@
 
 var config = require('./config');
-var Kaiseki = require('../lib/Kaiseki');
+var Kaiseki = require('../lib/kaiseki');
 var should = require('should');
 
 var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY);

@@ -330,9 +330,28 @@ describe('objects', function() {
     async.parallel([
       function(done) {
         parse.createObjects(className, dogs, function(err, res, body, success) {
-          success.should.be.true;
+          success.should.be.true;          
           should.not.exist(err);
-
+          //parse error is set in body.error          
+          /*
+            it may failed by body.code 
+            002 the service is currently unavailable
+            124 timeout
+            154 out of count requestlimit
+            155 out of normal requestlimit
+            159 temporary error
+          */
+          var retryable = [ 2, 124, 154, 155, 159];
+          if(body.code && retryable.indexOf(body.code) > -1){
+            console.log('code', body.code);
+            console.log('2', 'the service is currently unavailable');
+            console.log('124', 'timeout');
+            console.log('154', 'out of count requestlimit');
+            console.log('155', 'out of normal requestlimit');
+            console.log('159', 'temporary error');
+            console.log('try again later');
+          }
+          should.not.exist(body.error);
           done(err);
         });
       }
@@ -365,7 +384,7 @@ describe('objects', function() {
               breed: newBreed
             }
           });
-
+          
           map[objectId] = newBreed;
 
         }
@@ -396,10 +415,10 @@ describe('objects', function() {
 
           var dog = null,
               newBreed = "";
-
+          console.log('body2',body);
           for (var i = 0; i < body.length; i++) {
             dog = body[i];
-            newBreed = map[dog.objectId];
+            newBreed = map[dog.objectId];            
             dog.breed.should.eql(newBreed);
             should.exist(dog.updatedAt);
           }
