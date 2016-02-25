@@ -6,7 +6,7 @@ var Kaiseki = require('../lib/kaiseki');
 var request = require('request');
 var _ = require('underscore');
 
-var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY);
+var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, null, config.PARSE_SERVER_URL);
 
 parse.masterKey = config.PARSE_MASTER_KEY;
 
@@ -67,10 +67,8 @@ describe('roles', function() {
         parse.createRole(data, function(err, res, body, success) {
           success.should.be.false;
           should.not.exist(body.ACL);
-
           body.code.should.eql(135);
           body.error.should.eql('Role names must be specified.');
-
           done(err);
         });
       },
@@ -103,7 +101,6 @@ describe('roles', function() {
       body.createdAt.should.eql(role.createdAt);
       body.name.should.eql(role.name);
       should.exist(body.updatedAt);
-
       done();
     });
   });

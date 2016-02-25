@@ -6,7 +6,7 @@ var Kaiseki = require('../lib/kaiseki');
 var request = require('request');
 var _ = require('underscore');
 
-var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY);
+var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, null, config.PARSE_SERVER_URL);
 
 describe('file', function() {
   var imageFilePath = __dirname + '/fixtures/apple.jpg';
@@ -101,6 +101,7 @@ describe('file', function() {
         parse.deleteFile(fileName, function(err, res, body, success) {
           res.statusCode.should.eql(200);
           request.get(url, function(err, res, data) {
+            //It take a little time to delete it. It will response 403 later.
             res.statusCode.should.eql(403);
             callback(err);
           });

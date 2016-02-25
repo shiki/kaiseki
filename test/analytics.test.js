@@ -2,7 +2,7 @@ var config = require('./config');
 var should = require('should');
 var Kaiseki = require('../lib/kaiseki');
 
-var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY);
+var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, null, config.PARSE_SERVER_URL);
 
 describe('analytics', function() {
   it('can update app opened', function(done) {

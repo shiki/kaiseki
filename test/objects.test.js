@@ -6,7 +6,7 @@ var Kaiseki = require('../lib/kaiseki');
 var _ = require('underscore');
 
 var className = 'Dogs';
-var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY);
+var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, null, config.PARSE_SERVER_URL);
 
 describe('object', function() {
   var dog = {
@@ -330,17 +330,17 @@ describe('objects', function() {
     async.parallel([
       function(done) {
         parse.createObjects(className, dogs, function(err, res, body, success) {
-          success.should.be.true;          
+          success.should.be.true;
           should.not.exist(err);
-          //parse error is set in body.error          
-          /*
-            it may failed by body.code 
-            002 the service is currently unavailable
-            124 timeout
-            154 out of count requestlimit
-            155 out of normal requestlimit
-            159 temporary error
-          */
+          //parse error is set in body.error
+
+          //  it may failed by body.code
+          //  002 the service is currently unavailable
+          //  124 timeout
+          //  154 out of count requestlimit
+          //  155 out of normal requestlimit
+          //  159 temporary error
+
           var retryable = [ 2, 124, 154, 155, 159];
           if(body.code && retryable.indexOf(body.code) > -1){
             console.log('code', body.code);
@@ -377,14 +377,13 @@ describe('objects', function() {
 
           newBreed += i;
           objectId = objectIds[i];
-
           updates.push({
             objectId: objectId,
             data: {
               breed: newBreed
             }
           });
-          
+
           map[objectId] = newBreed;
 
         }
@@ -415,10 +414,9 @@ describe('objects', function() {
 
           var dog = null,
               newBreed = "";
-          console.log('body2',body);
           for (var i = 0; i < body.length; i++) {
             dog = body[i];
-            newBreed = map[dog.objectId];            
+            newBreed = map[dog.objectId];
             dog.breed.should.eql(newBreed);
             should.exist(dog.updatedAt);
           }
@@ -433,5 +431,4 @@ describe('objects', function() {
   });
 
 });
-
 

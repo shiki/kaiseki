@@ -5,7 +5,7 @@ var async = require('async');
 var Kaiseki = require('../lib/kaiseki');
 var _ = require('underscore');
 
-var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY);
+var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, null, config.PARSE_SERVER_URL);
 
 var users = {
   'Zennia': {
@@ -93,8 +93,14 @@ describe('user', function() {
         parse.createUser(incomplete, function(err, res, body, success) {
           success.should.be.false;
           should.not.exist(body.name);
-          body.code.should.eql(201);
-          body.error.should.eql('missing user password');
+          if(config.PARSE_SERVER_URL){
+            body.code.should.eql(200);
+            body.error.should.eql('bad or missing username');
+          }else{
+            body.code.should.eql(201);
+            body.error.should.eql('missing user password');
+          }
+
 
           done(err);
         });
@@ -109,8 +115,9 @@ describe('user', function() {
       success.should.be.true;
       should.exist(body.updatedAt);
       var compare = _.pick(object, 'name', 'gender', 'username', 'nickname', 'createdAt', 'objectId');
-      compare.updatedAt = body.updatedAt;
-      compare.should.eql(body);
+      var compare2 = _.pick(body, 'name', 'gender', 'username', 'nickname', 'createdAt', 'objectId');
+      //compare.updatedAt = body.updatedAt;
+      compare.should.eql(compare2);
       done();
     });
   });
@@ -277,7 +284,10 @@ describe('users', function() {
       body = _(body).sortBy('objectId');
       // copy updatedAt for easy comparision
       _(objectsToCompare).each(function(item, index) { item.updatedAt = body[index].updatedAt; });
-      objectsToCompare.should.eql(body);
+      var target = _(body).map(function(item) {
+        return _.pick(item, 'name', 'gender', 'username', 'nickname', 'createdAt', 'updatedAt', 'objectId');
+      });
+      objectsToCompare.should.eql(target);
 
       done();
     });

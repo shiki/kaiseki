@@ -6,7 +6,7 @@ var Kaiseki = require('../lib/kaiseki');
 var request = require('request');
 var _ = require('underscore');
 
-var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY);
+var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, null, config.PARSE_SERVER_URL);
 
 describe('push', function() {
   it('can broadcast a notification', function(done) {
