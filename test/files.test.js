@@ -17,8 +17,8 @@ describe('file', function() {
       success.should.be.true;
       should.exist(body.url);
       should.exist(body.name);
-      body.url.should.include(fileName);
-      body.name.should.include(fileName);
+      body.url.should.endWith(fileName);
+      body.name.should.endWith(fileName);
 
       request.get(body.url, function(err, res, body) {
         res.statusCode.should.eql(200);
@@ -35,8 +35,8 @@ describe('file', function() {
       success.should.be.true;
       should.exist(body.url);
       should.exist(body.name);
-      body.url.should.include(fileName);
-      body.name.should.include(fileName);
+      body.url.should.endWith(fileName);
+      body.name.should.endWith(fileName);
 
       request.get(body.url, function(err, res, body) {
         res.statusCode.should.eql(200);
@@ -54,8 +54,8 @@ describe('file', function() {
       success.should.be.true;
       should.exist(body.url);
       should.exist(body.name);
-      body.url.should.include(fileName);
-      body.name.should.include(fileName);
+      body.url.should.endWith(fileName);
+      body.name.should.endWith(fileName);
 
       request.get(body.url, function(err, res, body) {
         res.statusCode.should.eql(200);
@@ -73,8 +73,8 @@ describe('file', function() {
       success.should.be.true;
       should.exist(body.url);
       should.exist(body.name);
-      body.url.should.include(fileName);
-      body.name.should.include(fileName);
+      body.url.should.endWith(fileName);
+      body.name.should.endWith(fileName);
 
       request.get(body.url, function(err, res, body) {
         body.should.eql(data);
