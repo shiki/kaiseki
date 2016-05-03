@@ -116,7 +116,6 @@ describe('user', function() {
       should.exist(body.updatedAt);
       var compare = _.pick(object, 'name', 'gender', 'username', 'nickname', 'createdAt', 'objectId');
       var compare2 = _.pick(body, 'name', 'gender', 'username', 'nickname', 'createdAt', 'objectId');
-      //compare.updatedAt = body.updatedAt;
       compare.should.eql(compare2);
       done();
     });
