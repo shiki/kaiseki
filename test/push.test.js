@@ -7,6 +7,7 @@ var request = require('request');
 var _ = require('underscore');
 
 var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, null, config.PARSE_SERVER_URL);
+parse.masterKey = config.PARSE_MASTER_KEY;
 
 describe('push', function() {
   it('can broadcast a notification', function(done) {
@@ -20,7 +21,6 @@ describe('push', function() {
             alert: 'The next World Series has been announced'
           }
         };
-
         parse.sendPushNotification(notification, function(err, res, body, success) {
           success.should.be.true;
           should.exist(body.result);
@@ -42,7 +42,7 @@ describe('push', function() {
 
         parse.sendPushNotification(notification, function(err, res, body, success) {
           success.should.be.false;
-          body.error.should.eql('To push to iOS devices, you must first configure a valid certificate.');
+          body.error.should.eql('To push to ios devices, you must first configure a valid certificate.');
           body.code.should.eql(115);
 
           should.not.exist(body.data);

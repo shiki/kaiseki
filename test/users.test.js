@@ -6,6 +6,9 @@ var Kaiseki = require('../lib/kaiseki');
 var _ = require('underscore');
 
 var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, null, config.PARSE_SERVER_URL);
+if(config.PARSE_REVOCABLE_SESSION){
+  parse.revocable = config.PARSE_REVOCABLE_SESSION;
+}
 
 var users = {
   'Zennia': {
@@ -37,7 +40,6 @@ var userValues = _(users).values();
 var deleteUsers = function(callback) {
   // query all
   parse.getUsers(function(err, res, body) {
-
     // delete all
     async.forEach(body, function(item, callback) {
       async.waterfall([
@@ -69,9 +71,7 @@ var deleteUsers = function(callback) {
 describe('user', function() {
   var object = null; // the Parse user object
   var user = users['Zennia'];
-
   before(deleteUsers);
-
   it('can create', function(done) {
     async.parallel([
       function(done) {
@@ -125,13 +125,18 @@ describe('user', function() {
   it('can login', function(done) {
     parse.loginUser(object.username, object.password, function(err, res, body, success) {
       success.should.be.true;
-      body.sessionToken.should.eql(object.sessionToken);
+      //once parse-server require revocable session, token is get from Session, not user object itself
+      body.should.have.property('sessionToken');
+      object.sessionToken = body.sessionToken;
       done();
     });
   });
 
   it('can get current', function(done) {
-    var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, object.sessionToken);
+    var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, object.sessionToken, config.PARSE_SERVER_URL);
+    if(config.PARSE_REVOCABLE_SESSION){
+      parse.revocable = config.PARSE_REVOCABLE_SESSION;
+    }
     parse.getCurrentUser(function(err, res, body, success) {
       body.nickname.should.eql(object.nickname);
       body.objectId.should.eql(object.objectId);
@@ -145,7 +150,10 @@ describe('user', function() {
     async.series([
       // update
       function(callback) {
-        var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, object.sessionToken);
+        var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, object.sessionToken, config.PARSE_SERVER_URL);
+        if(config.PARSE_REVOCABLE_SESSION){
+          parse.revocable = config.PARSE_REVOCABLE_SESSION;
+        }
         parse.updateUser(object.objectId, {nickname: newNick}, function(err, res, body, success) {
           success.should.be.true;
           should.exist(body.updatedAt);
@@ -168,7 +176,10 @@ describe('user', function() {
   });
 
   it('can delete', function(done) {
-    var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, object.sessionToken);
+    var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, object.sessionToken, config.PARSE_SERVER_URL);
+    if(config.PARSE_REVOCABLE_SESSION){
+      parse.revocable = config.PARSE_REVOCABLE_SESSION;
+    }
     async.series([
       // delete
       function(callback) {
@@ -196,6 +207,9 @@ describe('user', function() {
 
   it('can request password reset', function(done) {
     var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY);
+    if(config.PARSE_REVOCABLE_SESSION){
+      parse.revocable = config.PARSE_REVOCABLE_SESSION;
+    }
     async.parallel([
       // Test that we can successfully request a reset.
       function(callback) {
