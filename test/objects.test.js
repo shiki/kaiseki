@@ -6,7 +6,7 @@ var Kaiseki = require('../lib/kaiseki');
 var _ = require('underscore');
 
 var className = 'Dogs';
-var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, null, config.PARSE_SERVER_URL);
+var parse = new Kaiseki(config);
 
 describe('object', function() {
   var dog = {
