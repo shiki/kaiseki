@@ -8,12 +8,32 @@ var _ = require('underscore');
 var className = 'Dogs';
 var parse = new Kaiseki(config);
 
+function deleteAll(callback) {
+  // query all
+  parse.getObjects(className, function(err, res, body, success) {
+    success.should.be.true;
+    var fetchedIds = _(body).pluck('objectId').sort();
+    // delete all
+    async.forEach(fetchedIds, function(item, callback) {
+      parse.deleteObject(className, item, function(err, res, body, success) {
+        success.should.be.true;
+        callback(err);
+      });
+    }, function(err, results) {
+      callback(err);
+    });
+  });
+}
+
 describe('object', function() {
   var dog = {
     name: 'Prince',
     breed: 'Pomeranian'
   };
   var object = null; // the Parse object we'll be passing along
+
+  before(deleteAll);
+  after(deleteAll);
 
   it('can create', function(done) {
     async.parallel([
@@ -138,23 +158,7 @@ describe('objects', function() {
   // create objects for testing
   before(function(done) {
     async.series([
-      // just to be sure, delete all data in the table
-      function(callback) {
-        // query all
-        parse.getObjects(className, function(err, res, body, success) {
-          success.should.be.true;
-          var fetchedIds = _(body).pluck('objectId').sort();
-          // delete all
-          async.forEach(fetchedIds, function(item, callback) {
-            parse.deleteObject(className, item, function(err, res, body, success) {
-              success.should.be.true;
-              callback(err);
-            });
-          }, function(err, results) {
-            callback(err);
-          });
-        });
-      },
+      deleteAll,
 
       function(callback) {
         async.forEach(dogs,
@@ -177,19 +181,7 @@ describe('objects', function() {
   });
 
   // delete objects after testing
-  after(function(done) {
-    async.forEach(objects,
-      function(item, callback) {
-        parse.deleteObject(className, item.objectId, function(err, res, body, success) {
-          success.should.be.true;
-          callback(err);
-        });
-      },
-      function(err) {
-        done();
-      }
-    );
-  });
+  after(deleteAll);
 
   it('supports basic queries', function(done) {
     // check data first
