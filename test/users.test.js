@@ -5,10 +5,7 @@ var async = require('async');
 var Kaiseki = require('../lib/kaiseki');
 var _ = require('underscore');
 
-var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, null, config.PARSE_SERVER_URL);
-if(config.PARSE_REVOCABLE_SESSION){
-  parse.revocable = config.PARSE_REVOCABLE_SESSION;
-}
+var parse = new Kaiseki(config);
 
 var users = {
   'Zennia': {
@@ -33,6 +30,7 @@ var users = {
     password: 'monkayo'
   }
 };
+
 // users as an array
 var userValues = _(users).values();
 
@@ -71,41 +69,31 @@ var deleteUsers = function(callback) {
 describe('user', function() {
   var object = null; // the Parse user object
   var user = users['Zennia'];
+
   before(deleteUsers);
+  after(deleteUsers);
+
   it('can create', function(done) {
-    async.parallel([
-      function(done) {
-        parse.createUser(user, function(err, res, body, success) {
-          success.should.be.true;
-          should.not.exist(err);
-          should.exist(body.createdAt);
-          should.exist(body.objectId);
-          should.exist(body.sessionToken);
-          user.gender.should.eql(body.gender);
-          object = body;
+    parse.createUser(user, function(err, res, body, success) {
+      success.should.be.true;
+      should.not.exist(err);
+      should.exist(body.createdAt);
+      should.exist(body.objectId);
+      should.exist(body.sessionToken);
+      user.gender.should.eql(body.gender);
+      object = body;
 
-          done();
-        });
-      },
-      // Test a failure
-      function(done) {
-        var incomplete = {name: 'Ling'};
-        parse.createUser(incomplete, function(err, res, body, success) {
-          success.should.be.false;
-          should.not.exist(body.name);
-          if(config.PARSE_SERVER_URL){
-            body.code.should.eql(200);
-            body.error.should.eql('bad or missing username');
-          }else{
-            body.code.should.eql(201);
-            body.error.should.eql('missing user password');
-          }
+      done();
+    });
+  });
 
-
-          done(err);
-        });
-      }
-    ], function(err, results) {
+  it('returns errors on incomplete create data', function(done) {
+    var incomplete = {name: 'Ling'};
+    parse.createUser(incomplete, function(err, res, body, success) {
+      success.should.be.false;
+      should.not.exist(body.name);
+      body.code.should.eql(200);
+      body.error.should.eql('bad or missing username');
       done(err);
     });
   });
@@ -132,10 +120,8 @@ describe('user', function() {
   });
 
   it('can get current', function(done) {
-    var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, object.sessionToken, config.PARSE_SERVER_URL);
-    if(config.PARSE_REVOCABLE_SESSION){
-      parse.revocable = config.PARSE_REVOCABLE_SESSION;
-    }
+    var sessionConfig = _.extend(_.clone(config), {sessionToken: object.sessionToken});
+    var parse = new Kaiseki(sessionConfig);
     parse.getCurrentUser(function(err, res, body, success) {
       body.nickname.should.eql(object.nickname);
       body.objectId.should.eql(object.objectId);
@@ -149,10 +135,8 @@ describe('user', function() {
     async.series([
       // update
       function(callback) {
-        var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, object.sessionToken, config.PARSE_SERVER_URL);
-        if(config.PARSE_REVOCABLE_SESSION){
-          parse.revocable = config.PARSE_REVOCABLE_SESSION;
-        }
+        var sessionConfig = _.extend(_.clone(config), {sessionToken: object.sessionToken});
+        var parse = new Kaiseki(sessionConfig);
         parse.updateUser(object.objectId, {nickname: newNick}, function(err, res, body, success) {
           success.should.be.true;
           should.exist(body.updatedAt);
@@ -175,10 +159,8 @@ describe('user', function() {
   });
 
   it('can delete', function(done) {
-    var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, object.sessionToken, config.PARSE_SERVER_URL);
-    if(config.PARSE_REVOCABLE_SESSION){
-      parse.revocable = config.PARSE_REVOCABLE_SESSION;
-    }
+    var sessionConfig = _.extend(_.clone(config), {sessionToken: object.sessionToken});
+    var parse = new Kaiseki(sessionConfig);
     async.series([
       // delete
       function(callback) {
@@ -204,41 +186,35 @@ describe('user', function() {
 
   });
 
-  it('can request password reset', function(done) {
-    var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY);
-    if(config.PARSE_REVOCABLE_SESSION){
-      parse.revocable = config.PARSE_REVOCABLE_SESSION;
-    }
-    async.parallel([
-      // Test that we can successfully request a reset.
-      function(callback) {
-        var joel = _.clone(users['Joel']);
-        joel.email = 'jb1blahblahblahblah@parse.com';
-        parse.createUser(joel, function(err, res, body, success) {
-          success.should.be.true;
-          parse.requestPasswordReset(joel.email, function(err, res, body, success) {
-            success.should.be.true;
-            should.exist(body);
-            _.isObject(body).should.be.true;
-            should.not.exist(err);
-            res.statusCode.should.eql(200);
+  // Currently turned off cause we need to have a proper email configuration in the parse 
+  // server to test this
+  xit('can request password reset', function(done) {
+    var parse = new Kaiseki(config);
+    var joel = _.clone(users['Joel']);
+    joel.email = 'jb1@parse.com';
+    parse.createUser(joel, function(err, res, body, success) {
+      success.should.be.true;
+      parse.requestPasswordReset(joel.email, function(err, res, body, success) {
+        console.log(body);
+        success.should.be.true;
+        should.exist(body);
+        _.isObject(body).should.be.true;
+        should.not.exist(err);
+        res.statusCode.should.eql(200);
 
-            callback(err);
-          });
-        });
-      },
-      // Test that using a non-existent email will result in an error.
-      function(callback) {
-        var email = 'probablyandunknownuser@parse.com';
-        parse.requestPasswordReset(email, function(err, res, body, success) {
-          success.should.be.false;
-          body.code.should.eql(205);
-          body.error.should.eql('no user found with email ' + email);
+        done(err);
+      });
+    });
+  });
 
-          callback(err);
-        });
-      }
-    ], function(err, results) {
+  xit('returns error on non-existent email', function(done) {
+    var parse = new Kaiseki(config);
+    var email = 'probablyandunknownuser@parse.com';
+    parse.requestPasswordReset(email, function(err, res, body, success) {
+      success.should.be.false;
+      body.code.should.eql(205);
+      body.error.should.eql('no user found with email ' + email);
+
       done(err);
     });
   });
