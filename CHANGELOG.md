@@ -1,5 +1,9 @@
 # Kaiseki Changelog
 
+### 1.0.0 (July 2, 2016)
+
+ * Refactored to only support open source [Parse Server](https://github.com/ParsePlatform/parse-server/). Support for the Parse service has been dropped. Thanks to [@sdf611097](https://github.com/sdf611097) for the help.
+
 ### 0.4.0 (September 30, 2012)
 
  * Support for request password (by [@programmerdave](https://github.com/programmerdave)).
@@ -27,4 +31,3 @@
 ### 0.1.0 (May 1, 2012)
 
  * First version. Supports objects and users.
-
