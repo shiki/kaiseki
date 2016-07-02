@@ -1,30 +1,31 @@
 Kaiseki
 =============
 
-A Parse.com [REST API](https://parse.com/docs/rest) client for Node.js
-
-
+A Node.js API client for the open source [Parse Server](https://github.com/ParsePlatform/parse-server). 
 
 Installing
 -------------
 
- * Install through npm:
+* Install through npm:
+ 
+    ```
+    npm install kaiseki
+    ```
 
-        npm install kaiseki
+* Or in your `package.json`:
 
- * Or in your `package.json`:
-
-        "dependencies": {
-          "kaiseki": "*",
-          ...
-        }
+    ```
+    "dependencies": {
+      "kaiseki": "*",
+      ...
+    }
+    ```
+    
  Then:
 
-        npm install
-
- * Or you can just download the files and put it in your project.
-
-
+    ```
+    npm install
+    ```
 
 Usage
 -------------
@@ -33,16 +34,22 @@ You might want to read about the [REST API](https://parse.com/docs/rest) first b
 
 ### Setup
 
-    // the class
-    var Kaiseki = require('kaiseki');
+```
+// the class
+var Kaiseki = require('kaiseki');
 
-    // instantiate
-    var APP_ID = '<your-Parse-application-id>';
-    var REST_API_KEY = '<your-Parse-REST-API-key>';
-    var kaiseki = new Kaiseki(APP_ID, REST_API_KEY);
+// instantiate
+var config = {
+  serverUrl: 'http://localhost:1337',
+  applicationId: 'myAppId',
+  masterKey: 'myMasterKey' // optional 
+};
+    
+var kaiseki = new Kaiseki(config);
 
-    // use it
-    kaiseki.getObjects(...);
+// use it
+kaiseki.getObjects(...);
+```
 
 ### Callbacks
 
