@@ -6,7 +6,7 @@ var Kaiseki = require('../lib/kaiseki');
 var request = require('request');
 var _ = require('underscore');
 
-var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, null, config.PARSE_SERVER_URL);
+var parse = new Kaiseki(config);
 
 describe('file', function() {
   var imageFilePath = __dirname + '/fixtures/apple.jpg';
@@ -47,9 +47,9 @@ describe('file', function() {
   });
 
   it('can upload a file buffer', function(done) {
-    var buffer = require('fs').readFileSync(imageFilePath),
-        fileName = 'orange.jpg',
-        contentType = 'image/jpeg';
+    var buffer = require('fs').readFileSync(imageFilePath);
+    var fileName = 'orange.jpg';
+    var contentType = 'image/jpeg';
     parse.uploadFileBuffer(buffer, contentType, fileName, function(err, res, body, success) {
       success.should.be.true;
       should.exist(body.url);
@@ -66,9 +66,9 @@ describe('file', function() {
   });
 
   it('can upload simple text as a file', function(done) {
-    var data = 'my text file contents',
-        contentType = 'text/plain',
-        fileName = 'text.txt';
+    var data = 'my text file contents';
+    var contentType = 'text/plain';
+    var fileName = 'text.txt';
     parse.uploadFileBuffer(data, contentType, fileName, function(err, res, body, success) {
       success.should.be.true;
       should.exist(body.url);
@@ -79,7 +79,7 @@ describe('file', function() {
       request.get(body.url, function(err, res, body) {
         body.should.eql(data);
         res.statusCode.should.eql(200);
-        res.headers['content-type'].should.eql(contentType);
+        res.headers['content-type'].should.startWith(contentType);
         done();
       });
     });
@@ -97,12 +97,12 @@ describe('file', function() {
         });
       },
       function(url, fileName, callback) {
-        parse.masterKey = config.PARSE_MASTER_KEY;
-        parse.deleteFile(fileName, function(err, res, body, success) {
+        var parseWithMaster = new Kaiseki(require('./config-master'));
+        parseWithMaster.deleteFile(fileName, function(err, res, body, success) {
           res.statusCode.should.eql(200);
           request.get(url, function(err, res, data) {
             //It take a little time to delete it. It will response 403 later.
-            res.statusCode.should.eql(403);
+            res.statusCode.should.within(403, 404);
             callback(err);
           });
         });
