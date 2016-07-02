@@ -23,9 +23,9 @@ Installing
     
  Then:
 
-    ```
-    npm install
-    ```
+ ```
+ npm install
+ ```
 
 Usage
 -------------
