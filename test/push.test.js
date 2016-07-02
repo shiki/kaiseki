@@ -1,15 +1,14 @@
 
-var config = require('./config');
+var configMaster = require('./config-master');
 var should = require('should');
 var async = require('async');
 var Kaiseki = require('../lib/kaiseki');
 var request = require('request');
 var _ = require('underscore');
 
-var parse = new Kaiseki(config.PARSE_APP_ID, config.PARSE_REST_API_KEY, null, config.PARSE_SERVER_URL);
-parse.masterKey = config.PARSE_MASTER_KEY;
+var parse = new Kaiseki(configMaster);
 
-describe('push', function() {
+xdescribe('push', function() {
   it('can broadcast a notification', function(done) {
     async.parallel([
       // Android
