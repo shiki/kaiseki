@@ -16,8 +16,7 @@ Installing
 
   ```json
   "dependencies": {
-    "kaiseki": "*",
-    ...
+    "kaiseki": "*"
   }
   ```
 
