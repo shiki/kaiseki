@@ -20,11 +20,21 @@
     "mime": "1.3.x"
   },
   "devDependencies": {
+    "async": "*",
     "mocha": "*",
-    "should": "*",
-    "async": "*"
+    "mongodb-runner": "^3.3.2",
+    "parse-server": "^2.2.15",
+    "should": "*"
   },
   "engines": {
     "node": ">= 4.3"
+  },
+  "scripts": {
+    "pretest": "MONGODB_VERSION=3.2.7 ./node_modules/.bin/mongodb-runner start;node test/parse-server/index.js&",
+    "//": "using || to closeParse and then mark as failed to avoid trigger cleanup again",
+    "test": "echo 'wait few sec to start local parse'; sleep 2s; ./node_modules/mocha/bin/mocha --reporter spec --timeout 30000 || ( npm run cleanup; exit 1 )",
+    "posttest": "npm run cleanup",
+    "cleanup": "./node_modules/.bin/mongodb-runner stop; echo 'close parse'; npm run closeParse",
+    "closeParse": "curl -X POST localhost:1337/shutdown"
   }
 }

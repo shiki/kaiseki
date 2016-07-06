@@ -653,12 +653,10 @@ kaiseki.sendAnalyticsEvent('Search', {
 
 Tests
 -------------
-In order to run the tests, you need to have a local Parse Server set up. We recommend setting up [parse-server-example](https://github.com/ParsePlatform/parse-server-example). Update `test/config.js` and `test/config-master.js` for whatever configurations you have set up on your server. 
-
 To run the test:
 
 ```
-make mocha
+npm test
 ```
 
 Note: Some tests have been disabled because they require extra configuration for the server like email and push notifications.
