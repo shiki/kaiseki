@@ -6,7 +6,7 @@ const ParseServer = require('parse-server').ParseServer;
 const config = require('../config.js');
 const port = 1337;
 const attr = {
-    databaseURI: 'mongodb://localhost:27017/dev',
+    databaseURI: process.env.DB_URI || 'mongodb://localhost:27017/dev',
     appId: config.applicationId,
     masterKey: 'myMasterKey', //Add your master key here. Keep it secret!
     serverURL: 'http://localhost:' + port + config.mountPath,
@@ -24,4 +24,3 @@ httpServer.listen(port, function () {
     console.log('running on port ' + port + '.');
     console.log('mount path', config.mountPath, '.');
 });
-

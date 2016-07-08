@@ -21,7 +21,10 @@
   },
   "devDependencies": {
     "async": "*",
+    "chai": "^3.5.0",
+    "express": "^4.14.0",
     "mocha": "*",
+    "mongodb": "^2.1.18",
     "mongodb-runner": "^3.3.2",
     "parse-server": "^2.2.15",
     "should": "*"
