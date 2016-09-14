@@ -26,6 +26,7 @@ var deleteRoles = function(callback) {
 var deleteUsers = function(callback) {
   async.waterfall([
     function(callback) {
+        //If not exist, { code: 101, message: 'Invalid username/password.' }
       parse.loginUser(dummyUser.username, dummyUser.password, function(err, res, body, success) {
         callback(err, success ? body : null);
       });
@@ -62,13 +63,13 @@ describe('roles', function() {
             '*': { 'read': true }
           }
         };
+        // { code: 111, message: 'name is required.' }
         parse.createRole(data, function(err, res, body, success) {
           success.should.be.false;
           should.not.exist(body.ACL);
           should.exist(body.error);
-          //origin is 135, 111 in open source, response msg is a generic string(for Each Clz) to indicate it is invalid
-          should.exist(body.error);
-          done(err);
+          body.error.should.eql('name is required.');
+          done();
         });
       },
       function(done) {
@@ -169,6 +170,8 @@ describe('roles', function() {
         });
       },
       function(callback) {
+
+        // { code: 101, message: 'Object not found.' }
         parse.getRole(role.objectId, function(err, res, body, success) {
           success.should.be.false; // false because it should no longer exist
           callback(err);

@@ -58,6 +58,8 @@ describe('object', function() {
             __type: 'InvalidName'
           }
         };
+
+        //error: Error generating response. ParseError
         parse.createObject(className, invalid, function(err, res, body, success) {
           success.should.be.false;
           should.not.exist(err);
@@ -129,12 +131,14 @@ describe('object', function() {
         });
       },
       // query again to make sure that it was deleted
+      // { code: 101, message: 'Object not found.' }
       function(callback) {
         parse.getObject(className, object.objectId, function(err, res, body, success) {
           success.should.be.false;
           should.not.exist(err);
           res.statusCode.should.eql(404);
           should.exist(body.error);
+          body.error.should.eql('Object not found.');
           callback(null);
         });
       }

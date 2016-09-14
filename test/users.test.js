@@ -87,6 +87,7 @@ describe('user', function() {
     });
   });
 
+  //{ code: 200, message: 'bad or missing username' }
   it('returns errors on incomplete create data', function(done) {
     var incomplete = {name: 'Ling'};
     parse.createUser(incomplete, function(err, res, body, success) {
@@ -173,6 +174,7 @@ describe('user', function() {
       },
 
       // test with GET
+      // { code: 101, message: 'Object not found.' }
       function(callback) {
         parse.getUser(object.objectId, function(err, res, body, success) {
           success.should.be.false;
@@ -186,7 +188,7 @@ describe('user', function() {
 
   });
 
-  // Currently turned off cause we need to have a proper email configuration in the parse 
+  // Currently turned off cause we need to have a proper email configuration in the parse
   // server to test this
   xit('can request password reset', function(done) {
     var parse = new Kaiseki(config);
@@ -195,7 +197,6 @@ describe('user', function() {
     parse.createUser(joel, function(err, res, body, success) {
       success.should.be.true;
       parse.requestPasswordReset(joel.email, function(err, res, body, success) {
-        console.log(body);
         success.should.be.true;
         should.exist(body);
         _.isObject(body).should.be.true;
