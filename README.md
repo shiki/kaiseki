@@ -656,7 +656,7 @@ Tests
 To run the test:
 
 ```
-npm test
+node test/test.js
 ```
 
 Note: Some tests have been disabled because they require extra configuration for the server like email and push notifications.
