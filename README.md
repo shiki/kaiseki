@@ -1,6 +1,8 @@
 Kaiseki
 =============
 
+[![Known Vulnerabilities](https://snyk.io/test/github/shiki/kaiseki/effd3948b62d6c7908ef2797c8067b1fd01203ca/badge.svg)](https://snyk.io/test/github/shiki/kaiseki/effd3948b62d6c7908ef2797c8067b1fd01203ca)
+
 A Node.js API client for the open source [Parse Server](https://github.com/ParsePlatform/parse-server).
 
 Installing
